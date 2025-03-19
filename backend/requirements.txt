@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+motor
+python-multipart
+python-jose[cryptography]
+passlib
+python-dotenv
+requests
+pypdf2

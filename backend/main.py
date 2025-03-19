@@ -199,7 +199,7 @@ async def query_document(document_id: str, query: QueryRequest, current_user: Us
             response = await client.post(
                 "http://localhost:11434/api/generate",
                 json={
-                    "model": "llama3.2",
+                    "model": "llama3.2:latest",
                     "prompt": prompt,
                     "stream": False
                 },
@@ -247,7 +247,7 @@ async def upload_document(
     # Generate title and summary using Ollama
     ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
     
-    prompt = f"""Generate a JSON object with 'title' (3-4 words), 'subject' (EXACTLY 1-2 words), and 'summary' (30-40 words) for this text:
+    prompt = f"""Generate a JSON object with 'title' (3-4 words max), 'subject' (EXACTLY 1-2 words), and 'summary' (30-40 words) for this text:
     {text[:2000]}... [truncated]
     Return ONLY valid JSON without additional formatting."""
     

@@ -51,6 +51,7 @@ class User(BaseModel):
     name: str
     email: str
     createdAt: datetime = Field(default_factory=datetime.utcnow)
+    formatted_created_at: str = Field(default_factory=lambda: datetime.utcnow().strftime('%d/%m/%Y'))
 
 # Document query model
 class Query(BaseModel):

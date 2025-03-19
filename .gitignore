@@ -20,5 +20,13 @@ build/
 .DS_Store
 Thumbs.db
 
+# Ignore Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.egg
+*$py.class
+
 # Ignore environment files
 .env

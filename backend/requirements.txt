@@ -7,3 +7,5 @@ passlib
 python-dotenv
 requests
 pypdf2
+httpx
+bcrypt

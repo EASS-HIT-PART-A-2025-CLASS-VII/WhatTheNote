@@ -7,64 +7,6 @@ import DashboardHeader from '../components/dashboard/DashboardHeader';
 import SearchFilters from '../components/dashboard/SearchFilters';
 import DocumentTabs from '../components/dashboard/DocumentTabs';
 
-// Mock data for documents with added subject property
-const mockDocuments = [
-  {
-    id: 1,
-    title: 'Machine Learning Fundamentals',
-    preview: 'This document covers the basic principles of machine learning, including supervised and unsupervised learning techniques...',
-    createdAt: new Date('2023-04-15'),
-    lastViewed: new Date('2023-05-20'),
-  
-    subject: 'Computer Science'
-  },
-  {
-    id: 2,
-    title: 'Quantum Computing: A Beginner\'s Guide',
-    preview: 'An introduction to quantum computing principles, qubits, and quantum algorithms...',
-    createdAt: new Date('2023-03-10'),
-    lastViewed: new Date('2023-06-05'),
-  
-    subject: 'Physics'
-  },
-  {
-    id: 3,
-    title: 'Data Structures and Algorithms',
-    preview: 'Comprehensive overview of fundamental data structures and algorithms with time complexity analysis...',
-    createdAt: new Date('2023-02-28'),
-    lastViewed: new Date('2023-05-12'),
-  
-    subject: 'Computer Science'
-  },
-  {
-    id: 4,
-    title: 'Artificial Neural Networks',
-    preview: 'Deep dive into artificial neural networks, backpropagation, and deep learning architectures...',
-    createdAt: new Date('2023-01-18'),
-    lastViewed: new Date('2023-04-30'),
-  
-    subject: 'Computer Science'
-  },
-  {
-    id: 5,
-    title: 'Principles of Quantum Mechanics',
-    preview: 'Exploring the fundamental principles of quantum mechanics including wave-particle duality...',
-    createdAt: new Date('2023-05-10'),
-    lastViewed: new Date('2023-06-01'),
-  
-    subject: 'Physics'
-  },
-  {
-    id: 6,
-    title: 'Introduction to Biology',
-    preview: 'An overview of basic biological concepts, cell structure, and genetics...',
-    createdAt: new Date('2023-06-05'),
-    lastViewed: new Date('2023-06-20'),
-  
-    subject: 'Biology'
-  }
-];
-
 // Available subject options
 const subjectOptions = ['All Subjects', 'Computer Science', 'Physics', 'Biology', 'Mathematics', 'Chemistry', 'Other'];
 

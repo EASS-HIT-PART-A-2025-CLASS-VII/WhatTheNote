@@ -249,7 +249,7 @@ const DocumentView = () => {
                             <div className="flex items-start justify-between mb-2">
                               <div className="font-medium">{(query as { question: string }).question}</div>
                               <div className="text-xs text-muted-foreground">
-                                {new Date((query as { timestamp: Date }).timestamp).toLocaleTimeString()} {new Date((query as { timestamp: Date }).timestamp).toLocaleDateString()}
+                                {new Date((query as { timestamp: Date }).timestamp).toLocaleTimeString()} {new Date((query as { timestamp: Date }).timestamp).toLocaleDateString('en-GB')}
                               </div>
                             </div>
                             <div className="text-muted-foreground text-sm">
@@ -283,7 +283,7 @@ const DocumentView = () => {
                             <div>
                               <div className="font-medium">{(query as { question: string }).question}</div>
                               <div className="text-xs text-muted-foreground mt-1">
-                                {new Date((query as { timestamp: Date }).timestamp).toLocaleString()}
+                              {new Date((query as { timestamp: Date }).timestamp).toLocaleTimeString()} {new Date((query as { timestamp: Date }).timestamp).toLocaleDateString('en-GB')}
                               </div>
                             </div>
                             <Button

@@ -1,6 +1,8 @@
 import httpx
 import json
 import os
+from PyPDF2 import PdfReader
+import io
 from fastapi import FastAPI, Depends, HTTPException, status, Body, UploadFile, File
 from pydantic import BaseModel
 import requests
@@ -173,10 +175,6 @@ async def create_document(
     
     return document
 
-from fastapi import HTTPException
-from datetime import datetime, timezone
-import httpx
-
 @app.post("/documents/{document_id}/query")
 async def query_document(document_id: str, query: QueryRequest, current_user: User = Depends(get_current_user)):
     # Get document from database
@@ -234,9 +232,7 @@ async def upload_document(
     # Read file content
     contents = file.file.read()
     
-    # Extract text from PDF (requires PyPDF2 installation)
-    from PyPDF2 import PdfReader
-    import io
+    # Extract text from PDF
     text = ""
     try:
         pdf = PdfReader(io.BytesIO(contents))

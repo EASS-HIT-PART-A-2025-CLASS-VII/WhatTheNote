@@ -15,9 +15,6 @@ from .db import get_user_by_email, create_user, update_user, delete_user
 # Load environment variables
 load_dotenv()
 
-# This is a simplified auth system for demonstration
-# In a real app, you would use a database
-
 # Secret key for JWT token from environment variables
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
@@ -28,15 +25,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-# Mock user database - replace with actual database in production
-fake_users_db = {
-    "user@example.com": {
-        "email": "user@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # "password"
-        "full_name": "Test User",
-    }
-}
 
 # Models
 class Token(BaseModel):
@@ -53,6 +41,10 @@ class User(BaseModel):
     createdAt: datetime = Field(default_factory=datetime.utcnow)
     formatted_created_at: str = Field(default_factory=lambda: datetime.utcnow().strftime('%d/%m/%Y'))
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    
 # Document query model
 class Query(BaseModel):
     question: str
@@ -85,13 +77,7 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-
-
 async def get_user(db, email: str):
-    # Get user from MongoDB instead of fake DB
     user_dict = await get_user_by_email(email)
     if user_dict:
         return UserInDB(**user_dict)
@@ -133,16 +119,3 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     if user is None:
         raise credentials_exception
     return user
-
-app = FastAPI()
-
-@app.get("/users/me", response_model=User)
-async def read_users_me(current_user: User = Depends(get_current_user)):
-    return current_user
-
-@app.delete("/users/me", response_model=dict)
-async def delete_current_user(current_user: User = Depends(get_current_user)):
-    result = await run_in_threadpool(delete_user, current_user.id)
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"message": "User deleted successfully"}

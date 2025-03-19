@@ -133,9 +133,9 @@ const DocumentView = () => {
               </div>
               
               <div className="flex items-center text-sm text-muted-foreground mt-2">
-                <span>Uploaded {new Date(document.uploadedDate).toLocaleDateString()}</span>
+                <span>Uploaded {document.uploadedDate.toLocaleDateString('en-GB')}</span>
                 <span className="mx-2">•</span>
-                <span>Last viewed {document.lastViewed.toLocaleDateString()}</span>
+                <span>Last viewed {document.lastViewed.toLocaleDateString('en-GB')}</span>
               </div>
             </div>
             

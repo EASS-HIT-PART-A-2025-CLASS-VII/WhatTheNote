@@ -105,8 +105,8 @@ async def get_document(user_id: str, document_id: str):
             "subject": doc["subject"],
             "summary": doc.get("summary", ""),
             "queries": doc.get("queries", []),
-            "uploadDate": doc["uploadedDate"],
-            "lastViewed": doc.get("lastViewed", datetime.utcnow()),
+            "uploadDate": doc["uploadedDate"].strftime('%d/%m/%Y'),
+            "lastViewed": doc.get("lastViewed", datetime.utcnow()).strftime('%d/%m/%Y'),
         }
     except InvalidId:
         raise HTTPException(status_code=400, detail="Invalid document ID")

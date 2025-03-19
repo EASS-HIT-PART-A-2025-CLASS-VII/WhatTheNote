@@ -10,7 +10,7 @@ import { useAuth } from '../../lib/AuthContext';
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const location = useLocation();
   const { user, logout } = useAuth();
 
@@ -28,6 +28,10 @@ const Navbar: React.FC = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
   }, []);
 
   useEffect(() => {

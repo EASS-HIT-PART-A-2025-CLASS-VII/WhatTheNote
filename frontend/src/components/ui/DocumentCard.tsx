@@ -11,22 +11,24 @@ interface DocumentCardProps {
   id: string;
   title: string;
   preview?: string;
-  createdAt: Date;
+  uploadedDate: Date;
   lastViewed?: Date;
   isProcessed?: boolean;
   subject?: string;
   className?: string;
+  summary?: string;
 }
 
 const DocumentCard: React.FC<DocumentCardProps> = ({
   id,
   title,
   preview,
-  createdAt,
+  uploadedDate,
   lastViewed,
   isProcessed = false,
   subject,
-  className
+  className,
+  summary
 }) => {
   return (
     <Card 
@@ -49,7 +51,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
               <div className="flex items-center text-xs text-muted-foreground space-x-3 mt-1">
                 <span className="flex items-center">
                   <Calendar className="h-3 w-3 mr-1" />
-                  {format(createdAt, 'MMM dd, yyyy')}
+                  {format(uploadedDate, 'MMM dd, yyyy')}
                 </span>
                 {lastViewed && (
                   <span className="flex items-center">

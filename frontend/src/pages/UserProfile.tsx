@@ -206,7 +206,7 @@ const UserProfile = () => {
                   </div>
                   <div className="space-y-1">
                     <Label>Account Created</Label>
-                    <p className="text-lg">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
+                    <p className="text-lg">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB') : 'N/A'}</p>
                   </div>
                 </>
               )}

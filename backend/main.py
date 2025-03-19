@@ -141,7 +141,7 @@ async def get_single_document(document_id: str, current_user: User = Depends(get
 
 @app.get("/documents", response_model=List[DocumentWithDetails])
 async def get_documents(current_user: User = Depends(get_current_user)):
-    documents = await get_user_documents(current_user.id)  # Added await
+    documents = await get_user_documents(current_user.id)
     return documents
 
 @app.post("/documents", response_model=DocumentWithDetails)
@@ -162,10 +162,9 @@ async def create_document(
     document = {
         "id": doc_id,
         "title": file.filename,
-        "content": "",  # Add your text extraction logic
-        "createdAt": datetime.now(timezone.utc),
+        "content": "",
+        "uploadedDate": datetime.now(timezone.utc),
         "subject": "Other",  # Add your subject detection logic
-
     }
     
     # Store in database
@@ -210,7 +209,7 @@ async def query_document(document_id: str, query: QueryRequest, current_user: Us
             query_data = {
                 "question": query.question,
                 "answer": llm_response.get("response").strip(),
-                "timestamp": datetime.datetime.now(datetime.timezone.utc)
+                "timestamp": datetime.utcnow()
             }
             result = await add_query_to_document(current_user.id, document_id, query_data)
             if not result.modified_count:
@@ -219,8 +218,12 @@ async def query_document(document_id: str, query: QueryRequest, current_user: Us
             return {
                 "question": query.question,
                 "answer": llm_response.get("response").strip(),
-                "timestamp": datetime.datetime.now(datetime.timezone.utc)
+                "timestamp": datetime.utcnow()
             }
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=503, detail=f"Ollama API unavailable: {str(e)}")
+    except (KeyError, json.JSONDecodeError) as e:
+        raise HTTPException(status_code=502, detail=f"Invalid response format from Ollama: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"LLM query failed: {str(e)}")
 
@@ -273,8 +276,8 @@ async def upload_document(
             detail=f"Document processing failed: {str(e)}"
         )
 
-    # Enforce 2-word title
-    title_words = ai_data["title"].split()[:2]
+    # Enforce 4-word title
+    title_words = ai_data["title"].split()[:4]
     ai_data["title"] = ' '.join(title_words) if len(title_words) >= 1 else "Untitled Document"
 
     # Create document object
@@ -284,8 +287,8 @@ async def upload_document(
         subject=ai_data.get("subject", "General"),
         content=text,
         summary=ai_data["summary"],
-        uploadedDate=datetime.now(timezone.utc),
-        lastViewed=datetime.now(timezone.utc)
+        uploadedDate=datetime.now(),
+        lastViewed=datetime.now()
     )
 
     # Save to database

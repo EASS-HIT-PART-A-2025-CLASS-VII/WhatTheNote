@@ -80,7 +80,6 @@ async def get_next_document_id():
     )
     return counter["seq"]
 
-
 async def get_document(user_id: str, document_id: str):
     try:
         document_id = int(document_id)
@@ -105,7 +104,7 @@ async def get_document(user_id: str, document_id: str):
             "subject": doc["subject"],
             "summary": doc.get("summary", ""),
             "queries": doc.get("queries", []),
-            "uploadDate": doc["uploadedDate"].strftime('%d/%m/%Y'),
+            "uploadedDate": doc["uploadedDate"].isoformat(),
             "lastViewed": doc.get("lastViewed", datetime.utcnow()).strftime('%d/%m/%Y'),
         }
     except InvalidId:

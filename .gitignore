@@ -45,3 +45,6 @@ vite.config.ts
 
 # TypeScript Configurations
 tsconfig*.json
+
+# Other
+*.todo

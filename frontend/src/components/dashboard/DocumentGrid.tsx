@@ -6,10 +6,11 @@ interface Document {
   id: number;
   title: string;
   preview?: string;
-  createdAt: Date;
+  uploadedDate?: Date;
   lastViewed?: Date;
   isProcessed?: boolean;
   subject?: string;
+  summary?: string;
 }
 
 interface DocumentGridProps {
@@ -30,11 +31,12 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({ documents, viewMode }) => {
           id={doc.id.toString()}
           title={doc.title}
           preview={doc.preview}
-          createdAt={doc.createdAt}
+          uploadedDate={doc.uploadedDate || new Date()}
           lastViewed={doc.lastViewed}
           isProcessed={doc.isProcessed}
           subject={doc.subject}
           className={viewMode === 'list' ? 'flex flex-col md:flex-row' : ''}
+          summary={doc.summary}
         />
       ))}
     </div>

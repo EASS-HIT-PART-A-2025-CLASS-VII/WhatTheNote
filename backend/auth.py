@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional, List
 import os
-
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.concurrency import run_in_threadpool
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -55,11 +54,11 @@ class Query(BaseModel):
 class DocumentWithDetails(BaseModel):
     id: int
     title: str
-    content: str
-    createdAt: datetime = Field(default_factory=datetime.utcnow)
-    lastViewed: Optional[datetime] = None
     subject: str
-    preview: Optional[str] = None
+    content: str
+    summary: str
+    uploadedDate: datetime = Field(default_factory=datetime.utcnow)
+    lastViewed: Optional[datetime] = None
 
     class Config:
         json_encoders = {
@@ -83,8 +82,8 @@ async def get_user(db, email: str):
         return UserInDB(**user_dict)
     return None
 
-async def authenticate_user(fake_db, email: str, password: str):
-    user = await get_user(fake_db, email)
+async def authenticate_user(db, email: str, password: str):
+    user = await get_user(db, email)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):

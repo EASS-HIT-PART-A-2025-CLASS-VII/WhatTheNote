@@ -144,7 +144,7 @@ const DocumentView = () => {
                 </TabsTrigger>
                 <TabsTrigger value="qa">
                   <MessageSquare className="mr-2 h-4 w-4" />
-                  Q&A
+                  Q&A With AI
                 </TabsTrigger>
                 <TabsTrigger value="history">
                   <History className="mr-2 h-4 w-4" />

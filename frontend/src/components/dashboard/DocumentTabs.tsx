@@ -29,9 +29,9 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
   expandedSubjects,
   toggleSubjectExpanded
 }) => {
-  const recentDocuments = [...filteredDocuments]
+  const recentDocuments = filteredDocuments
     .filter(doc => doc.lastViewed)
-    .sort((a, b) => (b.lastViewed?.getTime() || 0) - (a.lastViewed?.getTime() || 0));
+    .sort((a, b) => (b.lastViewed?.getTime() ?? 0) - (a.lastViewed?.getTime() ?? 0));
 
   
   return (
@@ -50,16 +50,20 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
       
       <TabsContent value="all" className="mt-0">
         {filteredDocuments.length === 0 ? (
-          <NoDocumentsFound searchQuery={searchQuery} onFileSelect={function (file: File): void {
-            throw new Error('Function not implemented.');
-          } } />
+          <NoDocumentsFound searchQuery={searchQuery} onFileSelect={handleFileSelect} />
         ) : (
           <DocumentGrid documents={filteredDocuments} viewMode={viewMode} />
         )}
       </TabsContent>
       
       <TabsContent value="recent" className="mt-0">
-        <DocumentGrid documents={recentDocuments} viewMode={viewMode} />
+        {recentDocuments.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            No recently viewed documents
+          </div>
+        ) : (
+          <DocumentGrid documents={recentDocuments} viewMode={viewMode} />
+        )}
       </TabsContent>
       
       

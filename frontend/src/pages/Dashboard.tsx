@@ -39,12 +39,19 @@ const Dashboard = () => {
         
         const data = await response.json();
         // Transform backend data to frontend format
-        const transformed = data.map((doc: any) => ({
-          ...doc,
-          uploadedDate: new Date(doc.uploadedDate),
-          lastViewed: doc.lastViewed ? new Date(doc.lastViewed) : undefined,
-          preview: doc.content?.substring(0, 200) // Create preview from content
-        }));
+        const transformed = data.map((doc: any) => {
+          try {
+            return {
+              ...doc,
+              uploadedDate: doc.uploadedDate ? new Date(doc.uploadedDate) : new Date(),
+              lastViewed: doc.lastViewed ? new Date(doc.lastViewed) : undefined,
+              preview: doc.summary ? `AI Summary - ${doc.summary}` : 'No Summary Available'
+            };
+          } catch (err) {
+            console.error('Error transforming document:', err);
+            return null;
+          }
+        }).filter(Boolean);
         setDocuments(transformed);
         
       } catch (err) {
@@ -67,8 +74,7 @@ const Dashboard = () => {
     // Search filter
     if (searchQuery) {
       filtered = filtered.filter(doc => 
-        doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-(doc.preview && doc.preview.toLowerCase().includes(searchQuery.toLowerCase()))
+        doc.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
     
@@ -96,7 +102,7 @@ const Dashboard = () => {
     formData.append('file', file);
   
     try {
-      const response = await fetch('/api/documents', {
+      const response = await fetch('http://localhost:8000/documents/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

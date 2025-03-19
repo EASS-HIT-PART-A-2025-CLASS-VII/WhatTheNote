@@ -50,7 +50,9 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
       
       <TabsContent value="all" className="mt-0">
         {filteredDocuments.length === 0 ? (
-          <NoDocumentsFound searchQuery={searchQuery} onFileSelect={handleFileSelect} />
+          <NoDocumentsFound searchQuery={searchQuery} onFileSelect={function (file: File): void {
+            throw new Error('Function not implemented.');
+          } } />
         ) : (
           <DocumentGrid documents={filteredDocuments} viewMode={viewMode} />
         )}

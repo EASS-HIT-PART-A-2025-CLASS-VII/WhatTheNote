@@ -123,15 +123,8 @@ const DocumentView = () => {
               
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <h1 className="text-3xl font-bold">{document.title}</h1>
-                
-                <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm">
-                    <DownloadCloud className="mr-2 h-4 w-4" />
-                    Download
-                  </Button>
-                </div>
+                <div className="flex items-center space-x-2"></div>
               </div>
-              
               <div className="flex items-center text-sm text-muted-foreground mt-2">
                 <span>Uploaded {document.uploadedDate.toLocaleDateString('en-GB')}</span>
                 <span className="mx-2">•</span>

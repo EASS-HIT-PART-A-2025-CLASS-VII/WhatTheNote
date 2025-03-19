@@ -10,7 +10,6 @@ import DocumentTabs from '../components/dashboard/DocumentTabs';
 // Available subject options
 const subjectOptions = ['All Subjects', 'Computer Science', 'Physics', 'Biology', 'Mathematics', 'Chemistry', 'Other'];
 
-// Remove mockDocuments array completely
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +41,7 @@ const Dashboard = () => {
         // Transform backend data to frontend format
         const transformed = data.map((doc: any) => ({
           ...doc,
-          createdAt: new Date(doc.createdAt),
+          uploadedDate: new Date(doc.uploadedDate),
           lastViewed: doc.lastViewed ? new Date(doc.lastViewed) : undefined,
           preview: doc.content?.substring(0, 200) // Create preview from content
         }));

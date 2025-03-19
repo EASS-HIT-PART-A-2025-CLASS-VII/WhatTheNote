@@ -117,7 +117,7 @@ async def register_user(user_data: dict = Body(...)):
         "email": email,
         "hashed_password": hashed_password,
         "documents": [],
-        "createdAt": datetime.utcnow()
+        "createdAt": datetime.now(timezone.utc)
     }
     
     # Add await if create_user is async
@@ -161,7 +161,7 @@ async def create_document(
         "id": doc_id,
         "title": file.filename,
         "content": "",  # Add your text extraction logic
-        "createdAt": datetime.utcnow(),
+        "createdAt": datetime.now(timezone.utc),
         "subject": "Other",  # Add your subject detection logic
 
     }
@@ -174,7 +174,7 @@ async def create_document(
     return document
 
 from fastapi import HTTPException
-import datetime
+from datetime import datetime, timezone
 import httpx
 
 @app.post("/documents/{document_id}/query")
@@ -288,8 +288,8 @@ async def upload_document(
         subject=ai_data.get("subject", "General"),
         content=text,
         summary=ai_data["summary"],
-        uploadedDate=datetime.utcnow(),
-        lastViewed=datetime.utcnow()
+        uploadedDate=datetime.now(timezone.utc),
+        lastViewed=datetime.now(timezone.utc)
     )
 
     # Save to database

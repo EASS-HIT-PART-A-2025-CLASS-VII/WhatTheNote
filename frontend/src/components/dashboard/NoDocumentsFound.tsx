@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Plus } from 'lucide-react';
-import FileUpload from '@/components/ui/FileUpload';
 
 interface NoDocumentsFoundProps {
   searchQuery?: string;
@@ -18,10 +17,7 @@ const NoDocumentsFound: React.FC<NoDocumentsFoundProps> = ({ searchQuery, onFile
       <p className="text-muted-foreground mb-6">
         {searchQuery ? 'Try a different search term or upload a new document.' : 'Upload your first document to get started.'}
       </p>
-      <FileUpload 
-        onFileSelect={onFileSelect}
-        className="max-w-md mx-auto"
-      />
+      
     </div>
   );
 };

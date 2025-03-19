@@ -33,7 +33,7 @@ __pycache__/
 .env
 
 # Frontend Toolchain Files
-./frontend/bun.lockb
+./frontend/src/bun.lockb
 components.json
 eslint.config.js
 package-lock.json

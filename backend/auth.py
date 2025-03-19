@@ -10,7 +10,7 @@ from passlib.context import CryptContext
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
-from db import get_user_by_email, create_user, update_user, delete_user
+from .db import get_user_by_email, create_user, update_user, delete_user
 
 # Load environment variables
 load_dotenv()
@@ -63,16 +63,19 @@ class DocumentWithDetails(BaseModel):
     id: int
     title: str
     content: str
+    createdAt: datetime = Field(default_factory=datetime.utcnow)
+    lastViewed: Optional[datetime] = None
     subject: str
-    summary: str
-    queries: List[Query] = []
-    uploadedDate: datetime = Field(default_factory=datetime.utcnow)
-    lastViewed: datetime = Field(default_factory=datetime.utcnow)
+    preview: Optional[str] = None
 
-# User in database model with password
+    class Config:
+        json_encoders = {
+            datetime: lambda dt: dt.isoformat()
+        }
+
 class UserInDB(User):
-    hashed_password: str
     documents: List[DocumentWithDetails] = []
+    hashed_password: str
 
 # Helper functions
 def verify_password(plain_password, hashed_password):

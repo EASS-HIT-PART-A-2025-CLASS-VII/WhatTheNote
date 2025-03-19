@@ -11,18 +11,19 @@ import { Document } from '../../types/document';
 
 interface DocumentTabsProps {
   filteredDocuments: Document[];
-  searchQuery: string;
-  onFileSelect: (file: File) => void;
+  isUploading: boolean;  // Add missing prop type
+  handleFileSelect: (file: File) => Promise<void>;
   viewMode: 'grid' | 'list';
   subjectGroups: Record<string, Document[]>;
   expandedSubjects: Record<string, boolean>;
   toggleSubjectExpanded: (subject: string) => void;
+  searchQuery: string;
 }
 
 const DocumentTabs: React.FC<DocumentTabsProps> = ({
   filteredDocuments,
   searchQuery,
-  onFileSelect,
+  handleFileSelect,
   viewMode,
   subjectGroups,
   expandedSubjects,
@@ -32,8 +33,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
     .filter(doc => doc.lastViewed)
     .sort((a, b) => (b.lastViewed?.getTime() || 0) - (a.lastViewed?.getTime() || 0));
 
-  const processedDocuments = filteredDocuments.filter(doc => doc.isProcessed);
-
+  
   return (
     <Tabs defaultValue="all" className="w-full">
       <TabsList className="mb-6">
@@ -42,7 +42,6 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
           <Clock className="mr-2 h-4 w-4" />
           Recently Viewed
         </TabsTrigger>
-        <TabsTrigger value="processed">AI Processed</TabsTrigger>
         <TabsTrigger value="subjects">
           <Layers className="mr-2 h-4 w-4" />
           By Subject
@@ -51,7 +50,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
       
       <TabsContent value="all" className="mt-0">
         {filteredDocuments.length === 0 ? (
-          <NoDocumentsFound searchQuery={searchQuery} onFileSelect={onFileSelect} />
+          <NoDocumentsFound searchQuery={searchQuery} onFileSelect={handleFileSelect} />
         ) : (
           <DocumentGrid documents={filteredDocuments} viewMode={viewMode} />
         )}
@@ -61,9 +60,6 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
         <DocumentGrid documents={recentDocuments} viewMode={viewMode} />
       </TabsContent>
       
-      <TabsContent value="processed" className="mt-0">
-        <DocumentGrid documents={processedDocuments} viewMode={viewMode} />
-      </TabsContent>
       
       <TabsContent value="subjects" className="mt-0">
         <SubjectGrouping 

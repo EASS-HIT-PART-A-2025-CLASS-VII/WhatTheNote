@@ -15,7 +15,7 @@ const mockDocuments = [
     preview: 'This document covers the basic principles of machine learning, including supervised and unsupervised learning techniques...',
     createdAt: new Date('2023-04-15'),
     lastViewed: new Date('2023-05-20'),
-    isProcessed: true,
+  
     subject: 'Computer Science'
   },
   {
@@ -24,7 +24,7 @@ const mockDocuments = [
     preview: 'An introduction to quantum computing principles, qubits, and quantum algorithms...',
     createdAt: new Date('2023-03-10'),
     lastViewed: new Date('2023-06-05'),
-    isProcessed: true,
+  
     subject: 'Physics'
   },
   {
@@ -33,7 +33,7 @@ const mockDocuments = [
     preview: 'Comprehensive overview of fundamental data structures and algorithms with time complexity analysis...',
     createdAt: new Date('2023-02-28'),
     lastViewed: new Date('2023-05-12'),
-    isProcessed: false,
+  
     subject: 'Computer Science'
   },
   {
@@ -42,7 +42,7 @@ const mockDocuments = [
     preview: 'Deep dive into artificial neural networks, backpropagation, and deep learning architectures...',
     createdAt: new Date('2023-01-18'),
     lastViewed: new Date('2023-04-30'),
-    isProcessed: true,
+  
     subject: 'Computer Science'
   },
   {
@@ -51,7 +51,7 @@ const mockDocuments = [
     preview: 'Exploring the fundamental principles of quantum mechanics including wave-particle duality...',
     createdAt: new Date('2023-05-10'),
     lastViewed: new Date('2023-06-01'),
-    isProcessed: true,
+  
     subject: 'Physics'
   },
   {
@@ -60,7 +60,7 @@ const mockDocuments = [
     preview: 'An overview of basic biological concepts, cell structure, and genetics...',
     createdAt: new Date('2023-06-05'),
     lastViewed: new Date('2023-06-20'),
-    isProcessed: true,
+  
     subject: 'Biology'
   }
 ];
@@ -68,91 +68,110 @@ const mockDocuments = [
 // Available subject options
 const subjectOptions = ['All Subjects', 'Computer Science', 'Physics', 'Biology', 'Mathematics', 'Chemistry', 'Other'];
 
+// Remove mockDocuments array completely
+
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isUploading, setIsUploading] = useState(false);
-  const [documents, setDocuments] = useState(mockDocuments);
-  const [filteredDocuments, setFilteredDocuments] = useState(mockDocuments);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedSubject, setSelectedSubject] = useState('All Subjects');
   const [subjectGroups, setSubjectGroups] = useState<Record<string, Document[]>>({});
   const [expandedSubjects, setExpandedSubjects] = useState<Record<string, boolean>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Filter documents based on search query and selected subject
-    let filtered = documents;
+    const fetchDocuments = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/documents', { // Update API endpoint
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json(); // Get detailed error
+          throw new Error(errorData.detail || 'Failed to fetch documents');
+        }
+        
+        const data = await response.json();
+        // Transform backend data to frontend format
+        const transformed = data.map((doc: any) => ({
+          ...doc,
+          createdAt: new Date(doc.createdAt),
+          lastViewed: doc.lastViewed ? new Date(doc.lastViewed) : undefined,
+          preview: doc.content?.substring(0, 200) // Create preview from content
+        }));
+        setDocuments(transformed);
+        
+      } catch (err) {
+        // Handle JWT expiration
+        if (err instanceof Error && err.message.includes('401')) {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        }
+        setError(err instanceof Error ? err.message : 'Failed to load documents');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDocuments();
+  }, []);
+
+  useEffect(() => {
+    let filtered = [...documents];
     
-    // First filter by search query
-    filtered = documents.filter(doc => 
-      doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (doc.preview && doc.preview.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    // Search filter
+    if (searchQuery) {
+      filtered = filtered.filter(doc => 
+        doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+(doc.preview && doc.preview.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
     
-    // Then filter by subject if not "All Subjects"
+    // Subject filter
     if (selectedSubject !== 'All Subjects') {
       filtered = filtered.filter(doc => doc.subject === selectedSubject);
     }
     
     setFilteredDocuments(filtered);
     
-    // Group documents by subject
-    const groups: Record<string, Document[]> = {};
-    filtered.forEach(doc => {
+    // Group by subject
+    const groups = filtered.reduce((acc, doc) => {
       const subject = doc.subject || 'Uncategorized';
-      if (!groups[subject]) {
-        groups[subject] = [];
-      }
-      groups[subject].push({...doc, id: doc.id});
-    });
+      if (!acc[subject]) acc[subject] = [];
+      acc[subject].push(doc);
+      return acc;
+    }, {} as Record<string, Document[]>);
     
     setSubjectGroups(groups);
-    
-    // Initialize expanded state for new subjects
-    const newExpandedState = { ...expandedSubjects };
-    Object.keys(groups).forEach(subject => {
-      if (newExpandedState[subject] === undefined) {
-        newExpandedState[subject] = true; // Default to expanded
-      }
-    });
-    setExpandedSubjects(newExpandedState);
-    
   }, [searchQuery, documents, selectedSubject]);
 
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = async (file: File) => {
     setIsUploading(true);
-    
-    // Mock subject detection based on filename
-    let detectedSubject = 'Other';
-    const filename = file.name.toLowerCase();
-    
-    if (filename.includes('machine') || filename.includes('algorithm') || filename.includes('neural')) {
-      detectedSubject = 'Computer Science';
-    } else if (filename.includes('quantum') || filename.includes('mechanics')) {
-      detectedSubject = 'Physics';
-    } else if (filename.includes('bio') || filename.includes('cell')) {
-      detectedSubject = 'Biology';
-    } else if (filename.includes('math') || filename.includes('calculus')) {
-      detectedSubject = 'Mathematics';
-    } else if (filename.includes('chem') || filename.includes('element')) {
-      detectedSubject = 'Chemistry';
-    }
-    
-    // Simulate processing delay
-    setTimeout(() => {
-      // Add new document to the list
-      const newDocument = {
-        id: documents.length + 1,
-        title: file.name.replace('.pdf', ''),
-        preview: 'Processing document...',
-        createdAt: new Date(),
-        lastViewed: new Date(),
-        isProcessed: false,
-        subject: detectedSubject
-      };
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    try {
+      const response = await fetch('/api/documents', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+  
+      if (!response.ok) throw new Error('Upload failed');
       
+      const newDocument = await response.json();
       setDocuments([newDocument, ...documents]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'File upload failed');
+    } finally {
       setIsUploading(false);
-    }, 3000);
+    }
   };
 
   const toggleSubjectExpanded = (subject: string) => {
@@ -165,33 +184,50 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      
       <main className="flex-1 pt-24 pb-16">
         <div className="container px-6 mx-auto">
-          <DashboardHeader />
-          
-          <SearchFilters 
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            selectedSubject={selectedSubject}
-            setSelectedSubject={setSelectedSubject}
-            subjectOptions={subjectOptions}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-          />
-          
-          <DocumentTabs 
-            filteredDocuments={filteredDocuments}
-            searchQuery={searchQuery}
-            onFileSelect={handleFileSelect}
-            viewMode={viewMode}
-            subjectGroups={subjectGroups}
-            expandedSubjects={expandedSubjects}
-            toggleSubjectExpanded={toggleSubjectExpanded}
-          />
+          {/* In the return statement */}
+          {isLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading documents...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8 text-red-500">
+              Error: {error}
+              <button 
+                className="ml-4 text-blue-500 hover:text-blue-700"
+                onClick={() => window.location.reload()}
+              >
+                Retry
+              </button>
+            </div>
+          ) : (
+            <>
+              <DashboardHeader />
+              <SearchFilters 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                selectedSubject={selectedSubject}
+                setSelectedSubject={setSelectedSubject}
+                subjectOptions={subjectOptions}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+              />
+              <DocumentTabs 
+                filteredDocuments={filteredDocuments}
+                isUploading={isUploading}
+                handleFileSelect={handleFileSelect}
+                viewMode={viewMode}
+                subjectGroups={subjectGroups}
+                expandedSubjects={expandedSubjects}
+                toggleSubjectExpanded={toggleSubjectExpanded}
+                searchQuery={searchQuery}
+              />
+            </>
+          )}
         </div>
       </main>
-      
       <Footer />
     </div>
   );

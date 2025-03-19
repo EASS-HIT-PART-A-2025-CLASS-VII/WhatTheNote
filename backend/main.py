@@ -1,3 +1,4 @@
+import httpx
 import json
 import os
 from fastapi import FastAPI, Depends, HTTPException, status, Body, UploadFile, File
@@ -8,9 +9,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta, datetime
 import uuid
 from typing import List
+from pymongo import MongoClient
+from backend.auth import Token, User, UserInDB, DocumentWithDetails, Query, authenticate_user, create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_password_hash, UserUpdate
 
-from auth import Token, User, UserInDB, DocumentWithDetails, Query, authenticate_user, create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_password_hash, UserUpdate
-from db import create_user, get_user_by_email, add_document_to_user, get_user_documents, update_document, add_query_to_document, update_user, get_users_collection, delete_user
+class QueryRequest(BaseModel):
+    question: str
+from backend.db import create_user, get_user_by_email, add_document_to_user, get_user_documents, update_document, add_query_to_document, update_user, get_users_collection, delete_user, get_database, get_document, get_next_document_id
 
 app = FastAPI()
 
@@ -38,7 +42,8 @@ async def get_features():
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(None, form_data.username, form_data.password)
+    db = await get_database()
+    user = await authenticate_user(db, form_data.username, form_data.password)  # Added await
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -60,12 +65,12 @@ async def update_user_me(user_update: UserUpdate = Body(...), current_user: User
     # Check if email exists
     try:
         if user_update.email is not None:
-            existing_user = get_user_by_email(user_update.email)
+            existing_user = await get_user_by_email(user_update.email)  # Added await
             if existing_user and existing_user['id'] != current_user.id:
                 raise HTTPException(status_code=400, detail="Email already registered")
     except AttributeError:
         raise HTTPException(status_code=422, detail="Invalid request format - must use JSON body")
-    
+
     # Validate update fields
     update_data = user_update.dict(exclude_unset=True)
     
@@ -73,58 +78,36 @@ async def update_user_me(user_update: UserUpdate = Body(...), current_user: User
         raise HTTPException(status_code=400, detail="No valid fields to update")
     
     # Update user in database
-    updated_user = await update_user(current_user.id, update_data)
-    if not updated_user:
+    update_result = await update_user(current_user.id, update_data)
+    if not update_result.modified_count:
         raise HTTPException(status_code=500, detail="Failed to update user")
     
-    # Fetch updated user document
-    updated_document = get_users_collection().find_one({"id": current_user.id})
+    # Fetch updated user document using async method
+    users_collection = await get_users_collection()
+    updated_document = await users_collection.find_one({"id": current_user.id})
     return User(**updated_document)
 
 @app.delete("/users/me")
 async def delete_user_me(current_user: User = Depends(get_current_user)):
-    result = delete_user(current_user.id)
+    result = await delete_user(current_user.id)  # Added await
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "User deleted successfully"}
-    # Check if email exists
-    try:
-        if user_update.email is not None:
-            existing_user = get_user_by_email(user_update.email)
-            if existing_user and existing_user['id'] != current_user.id:
-                raise HTTPException(status_code=400, detail="Email already registered")
-    except AttributeError:
-        raise HTTPException(status_code=422, detail="Invalid request format - must use JSON body")
-    
-    # Validate update fields
-    update_data = user_update.dict(exclude_unset=True)
-    
-    if not update_data:
-        raise HTTPException(status_code=400, detail="No valid fields to update")
-    
-    # Update user in database
-    updated_user = await update_user(current_user.id, update_data)
-    if not updated_user:
-        raise HTTPException(status_code=500, detail="Failed to update user")
-    
-    # Fetch updated user document
-    updated_document = get_users_collection().find_one({"id": current_user.id})
-    return User(**updated_document)
 
 @app.post("/register", response_model=User)
-async def register_user(user_data: dict = Body(...)):  # Accept a JSON object instead of individual fields
+async def register_user(user_data: dict = Body(...)):
     email = user_data.get("email")
     password = user_data.get("password")
     name = user_data.get("name")
-    # Check if user already exists
-    existing_user = get_user_by_email(email)
+    
+    # Add await to the database call
+    existing_user = await get_user_by_email(email)
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
     
-    # Create new user
     user_id = str(uuid.uuid4())
     hashed_password = get_password_hash(password)
     
@@ -137,9 +120,9 @@ async def register_user(user_data: dict = Body(...)):  # Accept a JSON object in
         "createdAt": datetime.utcnow()
     }
     
-    create_user(user_data)
+    # Add await if create_user is async
+    await create_user(user_data)
     
-    # Return user without password
     return User(
         id=user_id,
         name=name,
@@ -147,38 +130,101 @@ async def register_user(user_data: dict = Body(...)):  # Accept a JSON object in
         createdAt=user_data["createdAt"]
     )
 
+@app.get("/documents/{document_id}")
+async def get_single_document(document_id: str, current_user: User = Depends(get_current_user)):
+    document = await get_document(current_user.id, document_id)
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return document
+
 @app.get("/documents", response_model=List[DocumentWithDetails])
 async def get_documents(current_user: User = Depends(get_current_user)):
-    documents = get_user_documents(current_user.id)
+    documents = await get_user_documents(current_user.id)  # Added await
     return documents
 
 @app.post("/documents", response_model=DocumentWithDetails)
-async def create_document(document: DocumentWithDetails, current_user: User = Depends(get_current_user)):
-    # Ensure document has an ID
-    if not document.id:
-        document.id = await get_next_document_id()
-
-# Add sequence generator at the top with other imports
-from pymongo import MongoClient
-
-async def get_next_document_id() -> int:
-    from db import get_database
-    db = await get_database()
-    result = await db.document_ids.counters.find_one_and_update(
-        {'_id': 'document_id'},
-        {'$inc': {'seq': 1}},
-        upsert=True,
-        return_document=True
-    )
-    return result.get('seq', 1)
+async def create_document(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user)
+):
+    # Generate document ID
+    doc_id = await get_next_document_id()
     
-    await add_document_to_user(current_user.id, document.dict())
+    # Save file temporarily
+    file_path = f"uploads/{doc_id}_{file.filename}"
+    with open(file_path, "wb") as buffer:
+        content = await file.read()
+        buffer.write(content)
+    
+    # Create document entry (add your processing logic here)
+    document = {
+        "id": doc_id,
+        "title": file.filename,
+        "content": "",  # Add your text extraction logic
+        "createdAt": datetime.utcnow(),
+        "subject": "Other",  # Add your subject detection logic
+
+    }
+    
+    # Store in database
+    result = await add_document_to_user(current_user.id, document)
+    if not result.modified_count:
+        raise HTTPException(status_code=500, detail="Failed to add document")
+    
     return document
 
-@app.post("/documents/{document_id}/query", response_model=Query)
-async def add_query(document_id: str, query: Query, current_user: User = Depends(get_current_user)):
-    add_query_to_document(current_user.id, document_id, query.dict())
-    return query
+from fastapi import HTTPException
+import datetime
+import httpx
+
+@app.post("/documents/{document_id}/query")
+async def query_document(document_id: str, query: QueryRequest, current_user: User = Depends(get_current_user)):
+    # Get document from database
+    try:
+        document_id = int(document_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid document ID format")
+
+    # Get document from database
+    doc = await get_document(current_user.id, document_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    # Create LLM prompt with document context
+    prompt = f"Document: {doc['content']}\n\nQuestion: {query.question}\nAnswer:"
+    
+    try:
+        # Call Ollama API
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "http://localhost:11434/api/generate",
+                json={
+                    "model": "llama3.2",
+                    "prompt": prompt,
+                    "stream": False
+                },
+                timeout=30
+            )
+            response.raise_for_status()
+            llm_response = response.json()
+            
+            # Save query to database
+            query_data = {
+                "question": query.question,
+                "answer": llm_response.get("response").strip(),
+                "timestamp": datetime.datetime.now(datetime.timezone.utc)
+            }
+            result = await add_query_to_document(current_user.id, document_id, query_data)
+            if not result.modified_count:
+                raise HTTPException(status_code=500, detail="Failed to save query to database")
+            
+            return {
+                "question": query.question,
+                "answer": llm_response.get("response").strip(),
+                "timestamp": datetime.datetime.now(datetime.timezone.utc)
+            }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LLM query failed: {str(e)}")
 
 @app.post("/documents/upload")
 async def upload_document(
@@ -225,7 +271,11 @@ async def upload_document(
         cleaned_response = response_data['response'].replace('```json', '').replace('```', '').strip()
         ai_data = json.loads(cleaned_response)
     except Exception as e:
-        ai_data = {"title": "Untitled Document", "summary": "Summary generation failed"}
+        print(f"Document processing error: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Document processing failed: {str(e)}"
+        )
 
     # Enforce 2-word title
     title_words = ai_data["title"].split()[:2]

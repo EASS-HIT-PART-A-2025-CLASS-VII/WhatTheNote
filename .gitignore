@@ -23,6 +23,7 @@ Thumbs.db
 
 # Ignore Python cache and compiled files
 __pycache__/
+__init__.py
 *.py[cod]
 *.so
 *.egg-info/

@@ -15,10 +15,11 @@ build/
 # Ignore IDE specific files
 .vscode/
 .idea/
+.vite/
 
 # Ignore system files
-.DS_Store
 Thumbs.db
+.DS_Store
 
 # Ignore Python cache and compiled files
 __pycache__/
@@ -30,3 +31,16 @@ __pycache__/
 
 # Ignore environment files
 .env
+
+# Frontend Toolchain Files
+bun.lockb
+components.json
+eslint.config.js
+package-lock.json
+package.json
+postcss.config.js
+tailwind.config.ts
+vite.config.ts
+
+# TypeScript Configurations
+tsconfig*.json

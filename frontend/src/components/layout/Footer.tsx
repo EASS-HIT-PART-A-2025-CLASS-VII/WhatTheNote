@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import AnimatedLogo from '@/components/ui/AnimatedLogo';
+import AnimatedLogo from '../../components/ui/AnimatedLogo';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();

@@ -33,8 +33,9 @@ const Login = () => {
         return;
       }
       
-      // On success, redirect to dashboard
-      navigate('/dashboard');
+      // On success, reload page
+      navigate('/');
+      window.location.reload();
     } catch (err) {
       setError('An error occurred during login. Please try again.');
       console.error('Login error:', err);

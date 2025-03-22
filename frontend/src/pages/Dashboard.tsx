@@ -8,13 +8,17 @@ import SearchFilters from '../components/dashboard/SearchFilters';
 import DocumentTabs from '../components/dashboard/DocumentTabs';
 
 // Available subject options
-const subjectOptions = ['All Subjects', 'Computer Science', 'Physics', 'Biology', 'Mathematics', 'Chemistry', 'Other'];
-
+let subjectOptions = ['All Subjects'];
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
+
+  const handleDeleteDocument = (deletedId: number) => {
+    setDocuments(prev => prev.filter(doc => doc.id !== deletedId));
+    setFilteredDocuments(prev => prev.filter(doc => doc.id !== deletedId));
+  };
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedSubject, setSelectedSubject] = useState('All Subjects');
@@ -41,6 +45,7 @@ const Dashboard = () => {
         // Transform backend data to frontend format
         const transformed = data.map((doc: any) => {
           try {
+            subjectOptions.push(doc.subject || 'Uncategorized');
             return {
               ...doc,
               uploadedDate: doc.uploadedDate ? new Date(doc.uploadedDate) : new Date(),

@@ -76,15 +76,7 @@ const Navbar: React.FC = () => {
             >
               Home
             </Link>
-            <Link 
-              to="/dashboard" 
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              Dashboard
-            </Link>
+            
             <Button 
               variant="ghost" 
               size="icon" 
@@ -95,6 +87,15 @@ const Navbar: React.FC = () => {
             </Button>
             {user ? (
               <>
+                <Link 
+                  to="/dashboard" 
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary",
+                    isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
+                  Dashboard
+                </Link>
                 <Link 
                   to="/user" 
                   className="flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary"
@@ -110,7 +111,7 @@ const Navbar: React.FC = () => {
                   <Button variant="outline" className="mr-4">Login</Button>
                 </Link>
                 <Button asChild>
-                  <Link to="/dashboard">Get Started</Link>
+                  <Link to="/login">Get Started</Link>
                 </Button>
               </>
             )}
@@ -156,17 +157,18 @@ const Navbar: React.FC = () => {
           >
             Home
           </Link>
-          <Link 
-            to="/dashboard" 
-            className={cn(
-              "block py-2 text-base font-medium transition-colors hover:text-primary",
-              isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            Dashboard
-          </Link>
+          
           {user ? (
             <>
+              <Link 
+                to="/dashboard" 
+                className={cn(
+                  "block py-2 text-base font-medium transition-colors hover:text-primary",
+                  isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                Dashboard
+              </Link>
               <Link 
                 to="/user" 
                 className="flex items-center space-x-2 py-2 text-base font-medium transition-colors hover:text-primary"

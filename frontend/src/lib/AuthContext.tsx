@@ -17,7 +17,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   // Function to fetch current user data
   const refreshUser = async () => {
     try {
@@ -72,6 +71,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     apiLogout();
     setUser(null);
+    window.location.href = '/';
+    window.location.reload();
   };
 
   const value = {

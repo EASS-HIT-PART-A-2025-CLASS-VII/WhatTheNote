@@ -171,6 +171,36 @@ export const deleteUser = async (): Promise<DeleteAccountResponse> => {
   }
 };
 
+export interface DeleteDocumentResponse {
+  error?: boolean;
+  message?: string;
+  data?: {
+    message?: string;
+  };
+}
+
+export const deleteDocument = async (documentId: number): Promise<DeleteDocumentResponse> => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/documents/${documentId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { error: true, message: errorData.detail || 'Document deletion failed' };
+    }
+
+    const data = await response.json();
+    return { error: false, data };
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
 export const isAuthenticated = () => {
   return localStorage.getItem('token') !== null;
 };

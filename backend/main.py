@@ -12,11 +12,12 @@ from datetime import timedelta, datetime
 import uuid
 from typing import List
 from pymongo import MongoClient
+from bson import ObjectId
 from backend.auth import Token, User, UserInDB, DocumentWithDetails, Query, authenticate_user, create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_password_hash, UserUpdate
 
 class QueryRequest(BaseModel):
     question: str
-from backend.db import create_user, get_user_by_email, add_document_to_user, get_user_documents, update_document, add_query_to_document, update_user, get_users_collection, delete_user, get_database, get_document, get_next_document_id
+from backend.db import create_user, get_user_by_email, add_document_to_user, get_user_documents, update_document, add_query_to_document, update_user, get_users_collection, delete_user, get_database, get_document, get_next_document_id, delete_document
 
 app = FastAPI()
 
@@ -133,7 +134,7 @@ async def register_user(user_data: dict = Body(...)):
     )
 
 @app.get("/documents/{document_id}")
-async def get_single_document(document_id: str, current_user: User = Depends(get_current_user)):
+async def get_single_document(document_id: int, current_user: User = Depends(get_current_user)):
     document = await get_document(current_user.id, document_id)
     if not document:
         raise HTTPException(status_code=404, detail="Document not found")
@@ -144,6 +145,15 @@ async def get_documents(current_user: User = Depends(get_current_user)):
     documents = await get_user_documents(current_user.id)
     return documents
 
+@app.delete('/documents/{document_id}')
+async def delete_a_document(document_id: int, current_user: User = Depends(get_current_user)):
+    result = await delete_document(current_user.id, document_id)
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"message": "Document deleted successfully"}
+    
+
+# todo check if this is needed
 @app.post("/documents", response_model=DocumentWithDetails)
 async def create_document(
     file: UploadFile = File(...),

@@ -56,7 +56,7 @@ async def get_user_documents(user_id: str):
     user = await users.find_one({"id": user_id})
     return user.get("documents", []) if user else []
 
-async def update_document(user_id: str, document_id: str, update_data: dict):
+async def update_document(user_id: str, document_id: int, update_data: dict):
     users = await get_users_collection()
     return await users.update_one(
         {"id": user_id, "documents.id": document_id},
@@ -80,7 +80,7 @@ async def get_next_document_id():
     )
     return counter["seq"]
 
-async def get_document(user_id: str, document_id: str):
+async def get_document(user_id: str, document_id: int):
     try:
         document_id = int(document_id)
     except ValueError:
@@ -109,3 +109,15 @@ async def get_document(user_id: str, document_id: str):
         }
     except InvalidId:
         raise HTTPException(status_code=400, detail="Invalid document ID")
+    
+async def delete_document(user_id: str, document_id: int):
+    users = await get_users_collection()
+    result = await users.update_one(
+        {"id": user_id},
+        {"$pull": {"documents": {"id": document_id}}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return result
+        
+        

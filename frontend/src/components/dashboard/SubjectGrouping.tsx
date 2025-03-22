@@ -8,9 +8,8 @@ interface Document {
   id: number;
   title: string;
   preview?: string;
-  createdAt: Date;
+  uploadedDate?: Date;
   lastViewed?: Date;
-  isProcessed?: boolean;
   subject?: string;
 }
 

@@ -3,12 +3,19 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { FileText, Calendar, Clock, MoreHorizontal, Sparkles, Layers } from 'lucide-react';
+import { FileText, Calendar, Clock, MoreHorizontal, Sparkles, Layers, Trash } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../../components/ui/dropdown-menu';
 import { cn } from '../../lib/utils';
 import { format } from 'date-fns';
+import { deleteDocument } from '../../lib/api';
 
 interface DocumentCardProps {
-  id: string;
+  id: number;
   title: string;
   preview?: string;
   uploadedDate: Date;
@@ -33,7 +40,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
   return (
     <Card 
       className={cn(
-        "overflow-hidden transition-all duration-300 hover:shadow-md", 
+        "overflow-hidden transition-all duration-300 hover:shadow-md relative min-h-[200px]", 
         "border border-border hover:border-primary/20",
         className
       )}
@@ -53,23 +60,42 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
                   <Calendar className="h-3 w-3 mr-1" />
                   {format(uploadedDate, 'MMM dd, yyyy')}
                 </span>
-                {lastViewed && (
-                  <span className="flex items-center">
-                    <Clock className="h-3 w-3 mr-1" />
-                    {format(lastViewed, 'MMM dd, yyyy')}
-                  </span>
-                )}
               </div>
             </div>
           </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="-mt-1 -mr-2"
-            aria-label="More options"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="-mt-1 -mr-2 absolute top-5 right-5"
+              aria-label="More options"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem
+              className="text-destructive focus:bg-destructive/10 focus:text-destructive-foreground"
+              onSelect={async (e) => {
+    e.preventDefault();
+    const confirmed = window.confirm('Are you sure you want to delete this document?');
+    if (confirmed) {
+      try {
+        await deleteDocument(id);
+        alert('Document deleted successfully!');
+        window.location.reload();
+      } catch (error) {
+        alert('Failed to delete document. Please try again.');
+      }
+    }
+  }}
+            >
+              <Trash className="h-4 w-4 mr-2" />
+              Delete Document
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         </div>
         
         {preview && (
@@ -97,7 +123,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
         </div>
       </CardContent>
       
-      <CardFooter className="p-4 pt-0 flex justify-end">
+      <CardFooter className="p-4 pt-0 h-16 absolute bottom-0 right-0">
         <Button variant="outline" asChild size="sm">
           <Link to={`/document/${id}`}>
             View Document

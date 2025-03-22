@@ -11,7 +11,7 @@ import { Document } from '../../types/document';
 
 interface DocumentTabsProps {
   filteredDocuments: Document[];
-  isUploading: boolean;  // Add missing prop type
+  isUploading: boolean;
   handleFileSelect: (file: File) => Promise<void>;
   viewMode: 'grid' | 'list';
   subjectGroups: Record<string, Document[]>;

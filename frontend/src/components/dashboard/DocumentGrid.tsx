@@ -24,11 +24,11 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({ documents, viewMode }) => {
   }
 
   return (
-    <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6`}>
+    <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6 ${viewMode === 'list' ? 'min-w-[800px]' : ''}`}>
       {documents.map((doc) => (
         <DocumentCard
           key={doc.id}
-          id={doc.id.toString()}
+          id={doc.id}
           title={doc.title}
           preview={doc.preview}
           uploadedDate={doc.uploadedDate || new Date()}

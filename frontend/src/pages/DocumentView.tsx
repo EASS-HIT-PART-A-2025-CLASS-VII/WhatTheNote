@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -126,9 +125,9 @@ const DocumentView = () => {
                 <div className="flex items-center space-x-2"></div>
               </div>
               <div className="flex items-center text-sm text-muted-foreground mt-2">
-                <span>Uploaded {document.uploadedDate.toLocaleDateString('en-GB')}</span>
+                <span>Uploaded: {document.uploadedDate.toLocaleDateString('en-GB')}</span>
                 <span className="mx-2">•</span>
-                <span>Last viewed {document.lastViewed.toLocaleDateString('en-GB')}</span>
+                <span>Document ID: {document.id}</span>
               </div>
             </div>
             

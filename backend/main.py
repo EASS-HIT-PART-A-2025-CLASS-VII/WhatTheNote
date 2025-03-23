@@ -14,9 +14,6 @@ from typing import List
 from pymongo import MongoClient
 from bson import ObjectId
 from backend.auth import Token, User, UserInDB, DocumentWithDetails, Query, authenticate_user, create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_password_hash, UserUpdate
-
-class QueryRequest(BaseModel):
-    question: str
 from backend.db import create_user, get_user_by_email, add_document_to_user, get_user_documents, update_document, add_query_to_document, update_user, get_users_collection, delete_user, get_database, get_document, get_next_document_id, delete_document
 
 app = FastAPI()
@@ -31,6 +28,9 @@ app.add_middleware(
     max_age=600,  # Cache preflight requests for 10 minutes
 )
 
+class QueryRequest(BaseModel):
+    question: str
+
 @app.get("/")
 async def read_root():
     return {"message": "Hello, World!"}
@@ -38,7 +38,7 @@ async def read_root():
 @app.get("/features")
 async def get_features():
     return [
-        {"icon": "FileText", "title": "PDF Processing", "description": "Upload and process PDF documents."},
+        {"icon": "FileText", "title": "PDF Processing", "description": "Upload and process PDF files."},
         {"icon": "Brain", "title": "AI Summarization", "description": "Generate concise summaries."},
         {"icon": "Search", "title": "Smart Querying", "description": "Ask questions and get answers."}
     ]
@@ -173,7 +173,7 @@ async def query_document(document_id: int, query: QueryRequest, current_user: Us
         # Call Ollama API
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                "http://localhost:11434/api/generate",
+                os.getenv("OLLAMA_BASE_URL") + "/api/generate",
                 json={
                     "model": "llama3.2:latest",
                     "prompt": prompt,

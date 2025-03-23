@@ -13,6 +13,7 @@ import {
 import { cn } from '../../lib/utils';
 import { format } from 'date-fns';
 import { deleteDocument } from '../../lib/api';
+import { toast } from 'sonner';
 
 interface DocumentCardProps {
   id: number;
@@ -87,7 +88,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
         window.location.reload();
         navigate('/dashboard');
       } catch (error) {
-        alert('Failed to delete document. Please try again.');
+        toast.error('Failed to delete document. Please try again.');
       }
     }
   }}

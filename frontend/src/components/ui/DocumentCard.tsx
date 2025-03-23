@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { FileText, Calendar, Clock, MoreHorizontal, Sparkles, Layers, Trash } from 'lucide-react';
@@ -37,10 +37,11 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
   className,
   summary
 }) => {
+  const navigate = useNavigate();
   return (
     <Card 
       className={cn(
-        "overflow-hidden transition-all duration-300 hover:shadow-md relative min-h-[200px]", 
+        "overflow-hidden transition-all duration-300 hover:shadow-md relative min-h-[230px]", 
         "border border-border hover:border-primary/20",
         className
       )}
@@ -83,8 +84,8 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
     if (confirmed) {
       try {
         await deleteDocument(id);
-        alert('Document deleted successfully!');
         window.location.reload();
+        navigate('/dashboard');
       } catch (error) {
         alert('Failed to delete document. Please try again.');
       }
@@ -107,13 +108,6 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
         )}
         
         <div className="mt-3 flex items-center justify-between">
-          {isProcessed && (
-            <div className="flex items-center text-xs font-medium text-primary">
-              <Sparkles className="h-3 w-3 mr-1" />
-              AI Summary Available
-            </div>
-          )}
-          
           {subject && (
             <div className="flex items-center text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded-full">
               <Layers className="h-3 w-3 mr-1" />

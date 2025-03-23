@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Button } from "../components/ui/button";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
-import { FileQuestion } from "lucide-react";
+import { FileQuestion, Loader2 } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 
@@ -14,6 +14,7 @@ const Upload = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +29,7 @@ const Upload = () => {
   const handleSubmit = async () => {
     if (file) {
       try {
+        setIsLoading(true);
         const formData = new FormData();
         formData.append('file', file);
         
@@ -47,10 +49,11 @@ const Upload = () => {
 
         const result = await response.json();
         alert('File uploaded successfully!');
-        // Optionally reset file state or redirect
       } catch (error) {
         console.error('Upload error:', error);
         alert('Upload failed. Please try again.');
+      } finally {
+        setIsLoading(false);
       }
     } else {
       alert("No file selected.");
@@ -90,13 +93,17 @@ const Upload = () => {
                 accept="application/pdf"
                 onChange={handleFileChange}
                 ref={fileInputRef}
+                disabled={isLoading}
                 className="mb-4 border border-input rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
               />
               <div className="flex space-x-4">
-                <Button onClick={handleSubmit} className="bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4 rounded-lg transition-colors">
-                  Upload
+                <Button onClick={handleSubmit} disabled={isLoading} className="bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4 rounded-lg transition-colors">
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : null}
+                  {isLoading ? "Uploading..." : "Upload"}
                 </Button>
-                <Button variant="destructive" onClick={handleClearSelection} className="py-2 px-4 rounded-lg transition-colors">
+                <Button variant="destructive" onClick={handleClearSelection} className="py-2 px-4 rounded-lg transition-colors" disabled={isLoading}>
                   Clear Selection
                 </Button>
               </div>

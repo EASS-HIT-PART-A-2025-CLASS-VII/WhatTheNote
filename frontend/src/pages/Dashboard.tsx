@@ -18,11 +18,6 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
-
-  const handleDeleteDocument = (deletedId: number) => {
-    setDocuments(prev => prev.filter(doc => doc.id !== deletedId));
-    setFilteredDocuments(prev => prev.filter(doc => doc.id !== deletedId));
-  };
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedSubject, setSelectedSubject] = useState('All Subjects');
@@ -33,49 +28,50 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchDocuments = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/documents', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json(); // Get detailed error
-          throw new Error(errorData.detail || 'Failed to fetch documents');
+    try {
+      const response = await fetch('http://localhost:8000/documents', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-        
-        const data = await response.json();
-        // Transform backend data to frontend format
-        const transformed = data.map((doc: any) => {
-          try {
-            subjectOptions.push(doc.subject || 'Uncategorized');
-            return {
-              ...doc,
-              uploadedDate: doc.uploadedDate ? new Date(doc.uploadedDate) : new Date(),
-              lastViewed: doc.lastViewed ? new Date(doc.lastViewed) : undefined,
-              preview: doc.summary ? `AI Summary - ${doc.summary}` : 'No Summary Available'
-            };
-          } catch (err) {
-            console.error('Error transforming document:', err);
-            return null;
-          }
-        }).filter(Boolean);
-        setDocuments(transformed);
-        
-      } catch (err) {
-        // Handle JWT expiration
-        if (err instanceof Error && err.message.includes('401')) {
-          localStorage.removeItem('token');
-          window.location.href = '/login';
-        }
-        setError(err instanceof Error ? err.message : 'Failed to load documents');
-      } finally {
-        setIsLoading(false);
+      });
+      
+      if (!response.ok) {
+        navigate('/login');
       }
-    };
-    fetchDocuments();
-  }, []);
+      
+      const data = await response.json();
+      // Transform backend data to frontend format
+      const transformed = data.map((doc: any) => {
+        try {
+          if (!subjectOptions.includes(doc.subject)) {
+            subjectOptions.push(doc.subject);
+          }
+          return {
+            ...doc,
+            uploadedDate: doc.uploadedDate ? new Date(doc.uploadedDate) : new Date(),
+            lastViewed: doc.lastViewed ? new Date(doc.lastViewed) : undefined,
+            preview: doc.summary ? `AI Summary - ${doc.summary}` : 'No Summary Available'
+          };
+        } catch (err) {
+          console.error('Error transforming document:', err);
+          return null;
+        }
+      }).filter(Boolean);
+      setDocuments(transformed);
+      
+    } catch (err) {
+      // Handle JWT expiration
+      if (err instanceof Error && err.message.includes('401')) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+      setError(err instanceof Error ? err.message : 'Failed to load documents');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  fetchDocuments();
+  }, [user, navigate]);
 
   useEffect(() => {
     let filtered = [...documents];
@@ -136,61 +132,57 @@ const Dashboard = () => {
       [subject]: !expandedSubjects[subject]
     });
   };
-
-  if (user) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-1 pt-24 pb-16">
-          <div className="container px-6 mx-auto">
-            {/* In the return statement */}
-            {isLoading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading documents...</p>
-              </div>
-            ) : error ? (
-              <div className="text-center py-8 text-red-500">
-                Error: {error}
-                <button 
-                  className="ml-4 text-blue-500 hover:text-blue-700"
-                  onClick={() => window.location.reload()}
-                >
-                  Retry
-                </button>
-              </div>
-            ) : (
-              <>
-                <DashboardHeader />
-                <SearchFilters 
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  selectedSubject={selectedSubject}
-                  setSelectedSubject={setSelectedSubject}
-                  subjectOptions={subjectOptions}
-                  viewMode={viewMode}
-                  setViewMode={setViewMode}
-                />
-                <DocumentTabs 
-                  filteredDocuments={filteredDocuments}
-                  isUploading={isUploading}
-                  handleFileSelect={handleFileSelect}
-                  viewMode={viewMode}
-                  subjectGroups={subjectGroups}
-                  expandedSubjects={expandedSubjects}
-                  toggleSubjectExpanded={toggleSubjectExpanded}
-                  searchQuery={searchQuery}
-                />
-              </>
-            )}
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  } else {
-    navigate('/login');
-  }
+  
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-1 pt-24 pb-16">
+        <div className="container px-6 mx-auto">
+          {/* In the return statement */}
+          {isLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading documents...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8 text-red-500">
+              Error: {error}
+              <button 
+                className="ml-4 text-blue-500 hover:text-blue-700"
+                onClick={() => window.location.reload()}
+              >
+                Retry
+              </button>
+            </div>
+          ) : (
+            <>
+              <DashboardHeader />
+              <SearchFilters 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                selectedSubject={selectedSubject}
+                setSelectedSubject={setSelectedSubject}
+                subjectOptions={subjectOptions}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+              />
+              <DocumentTabs 
+                filteredDocuments={filteredDocuments}
+                isUploading={isUploading}
+                handleFileSelect={handleFileSelect}
+                viewMode={viewMode}
+                subjectGroups={subjectGroups}
+                expandedSubjects={expandedSubjects}
+                toggleSubjectExpanded={toggleSubjectExpanded}
+                searchQuery={searchQuery}
+              />
+            </>
+          )}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
 };
 
 export default Dashboard;

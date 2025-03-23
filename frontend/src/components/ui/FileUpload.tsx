@@ -84,7 +84,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   };
 
   const handleButtonClick = () => {
-    if (fileInputRef.current) {
+    if (!isUploading && fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
@@ -144,6 +144,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         accept={allowedTypes.join(',')}
         className="hidden"
         id="file-upload"
+        disabled={isUploading}
       />
       
       {!selectedFile ? (
@@ -157,6 +158,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
             "cursor-pointer"
           )}
           onClick={handleButtonClick}
+          aria-disabled={isUploading}
+          style={{ pointerEvents: isUploading ? 'none' : 'auto' }}
         >
           <div className="flex flex-col items-center justify-center space-y-4">
             <div className="rounded-full bg-primary/10 p-4">
@@ -168,7 +171,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 Drag and drop your PDF or click to browse
               </p>
               <div className="pt-2">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" disabled={isUploading}>
                   Select File
                 </Button>
               </div>

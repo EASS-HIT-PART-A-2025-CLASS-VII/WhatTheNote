@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from '../../components/ui/button';
 import { Progress } from '../../components/ui/progress';
@@ -8,6 +7,7 @@ import { cn } from '../../lib/utils';
 
 interface FileUploadProps {
   onFileSelect?: (file: File) => void;
+  onError?: (error: string) => void;
   allowedTypes?: string[];
   maxSize?: number; // in MB
   className?: string;
@@ -40,13 +40,15 @@ const FileUpload: React.FC<FileUploadProps> = ({
     // Check file type
     const fileType = `.${file.name.split('.').pop()?.toLowerCase()}`;
     if (!allowedTypes.includes(fileType) && !allowedTypes.includes('*')) {
-      setUploadError(`Invalid file type. Allowed types: ${allowedTypes.join(', ')}`);
+      const errorMsg = `Invalid file type. Allowed types: ${allowedTypes.join(', ')}`;
+      setUploadError(errorMsg);
       return false;
     }
 
     // Check file size
     if (file.size > maxSize * 1024 * 1024) {
-      setUploadError(`File too large. Maximum size: ${maxSize}MB`);
+      const errorMsg = `File too large. Maximum size: ${maxSize}MB`;
+      setUploadError(errorMsg);
       return false;
     }
 
@@ -62,10 +64,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
       const file = e.dataTransfer.files[0];
       if (validateFile(file)) {
         setSelectedFile(file);
-        if (onFileSelect) {
-          onFileSelect(file);
-        }
+        onFileSelect?.(file);
         handleFileUpload(file);
+      } else {
+        setSelectedFile(null);
+        if (onFileSelect) onFileSelect(undefined as unknown as File);
       }
     }
   };
@@ -75,10 +78,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
       const file = e.target.files[0];
       if (validateFile(file)) {
         setSelectedFile(file);
-        if (onFileSelect) {
-          onFileSelect(file);
-        }
+        onFileSelect?.(file);
         handleFileUpload(file);
+      } else {
+        setSelectedFile(null);
+        if (onFileSelect) onFileSelect(undefined as unknown as File);
       }
     }
   };
@@ -89,8 +93,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
     }
   };
 
-  // This is a simulation of an upload process
-  // In a real app, this would be replaced with actual API calls
   const handleFileUpload = async (file: File) => {
     setIsUploading(true);
     setProgress(0);
@@ -146,6 +148,15 @@ const FileUpload: React.FC<FileUploadProps> = ({
         id="file-upload"
         disabled={isUploading}
       />
+      
+      {uploadError && (
+        <div className="mb-4">
+          <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg">
+            <AlertCircle className="h-5 w-5" />
+            <span className="text-sm">{uploadError}</span>
+          </div>
+        </div>
+      )}
       
       {!selectedFile ? (
         <div

@@ -8,6 +8,8 @@ import FeatureCard from "../components/ui/FeatureCard";
 import { FileText, Brain, Search, Upload, Bot, Cpu } from "lucide-react";
 import AnimatedLogo from "../components/ui/AnimatedLogo";
 import { LucideIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../lib/AuthContext';
 
 const MotionLink = motion(Link);
 const MotionButton = motion(Button);
@@ -30,6 +32,9 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 const Index = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   // Use the Feature type for the features state
   const [features, setFeatures] = useState<Feature[]>([]);
 
@@ -81,9 +86,15 @@ const Index = () => {
               className="min-w-[160px]"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              asChild
+              onClick={() => {
+                if (user) {
+                  navigate('/dashboard');
+                } else {
+                  navigate('/login');
+                }
+              }}
             >
-              <Link to="/dashboard">Get Started</Link>
+              Get Started
             </MotionButton>
           </motion.div>
         </div>

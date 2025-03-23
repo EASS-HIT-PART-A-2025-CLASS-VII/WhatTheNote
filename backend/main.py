@@ -153,37 +153,6 @@ async def delete_a_document(document_id: int, current_user: User = Depends(get_c
     return {"message": "Document deleted successfully"}
     
 
-# todo check if this is needed
-@app.post("/documents", response_model=DocumentWithDetails)
-async def create_document(
-    file: UploadFile = File(...),
-    current_user: User = Depends(get_current_user)
-):
-    # Generate document ID
-    doc_id = await get_next_document_id()
-    
-    # Save file temporarily
-    file_path = f"uploads/{doc_id}_{file.filename}"
-    with open(file_path, "wb") as buffer:
-        content = await file.read()
-        buffer.write(content)
-    
-    # Create document entry (add your processing logic here)
-    document = {
-        "id": doc_id,
-        "title": file.filename,
-        "content": "",
-        "uploadedDate": datetime.now(timezone.utc),
-        "subject": "Other",  # Add your subject detection logic
-    }
-    
-    # Store in database
-    result = await add_document_to_user(current_user.id, document)
-    if not result.modified_count:
-        raise HTTPException(status_code=500, detail="Failed to add document")
-    
-    return document
-
 @app.post("/documents/{document_id}/query")
 async def query_document(document_id: str, query: QueryRequest, current_user: User = Depends(get_current_user)):
     # Get document from database

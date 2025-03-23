@@ -5,8 +5,13 @@ import { Button } from "../components/ui/button";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { FileQuestion } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../lib/AuthContext';
+
 
 const Upload = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -66,43 +71,47 @@ const Upload = () => {
     );
   }, [location.pathname]);
 
-  return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <Navbar />
-      <main className="flex-1 pt-32 md:pt-40 pb-16">
-        <div className="container px-6 mx-auto text-center">
-          <div className="rounded-full bg-primary/10 p-5 w-20 h-20 flex items-center justify-center mx-auto mb-6">
-            <FileQuestion className="h-10 w-10 text-primary" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Upload PDF</h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-md mx-auto">
-            Please upload your PDF file below.
-          </p>
-          <div className="flex flex-col items-center">
-            <input
-              type="file"
-              accept="application/pdf"
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              className="mb-4 border border-input rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
-            />
-            <div className="flex space-x-4">
-              <Button onClick={handleSubmit} className="bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4 rounded-lg transition-colors">
-                Upload
-              </Button>
-              <Button variant="destructive" onClick={handleClearSelection} className="py-2 px-4 rounded-lg transition-colors">
-                Clear Selection
-              </Button>
+  if (user) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background">
+        <Navbar />
+        <main className="flex-1 pt-32 md:pt-40 pb-16">
+          <div className="container px-6 mx-auto text-center">
+            <div className="rounded-full bg-primary/10 p-5 w-20 h-20 flex items-center justify-center mx-auto mb-6">
+              <FileQuestion className="h-10 w-10 text-primary" />
             </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Upload PDF</h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-md mx-auto">
+              Please upload your PDF file below.
+            </p>
+            <div className="flex flex-col items-center">
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+                className="mb-4 border border-input rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+              />
+              <div className="flex space-x-4">
+                <Button onClick={handleSubmit} className="bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4 rounded-lg transition-colors">
+                  Upload
+                </Button>
+                <Button variant="destructive" onClick={handleClearSelection} className="py-2 px-4 rounded-lg transition-colors">
+                  Clear Selection
+                </Button>
+              </div>
+            </div>
+            {file && (
+              <p className="mt-4 text-success-foreground">Selected file: {file.name}</p>
+            )}
           </div>
-          {file && (
-            <p className="mt-4 text-success-foreground">Selected file: {file.name}</p>
-          )}
-        </div>
-      </main>
-      <Footer />
-    </div>
-  );
+        </main>
+        <Footer />
+      </div>
+    );
+  } else {
+    navigate('/login');
+  }
 };
 
 export default Upload;

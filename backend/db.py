@@ -81,10 +81,9 @@ async def get_next_document_id():
     return counter["seq"]
 
 async def get_document(user_id: str, document_id: int):
-    try:
-        document_id = int(document_id)
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid document ID format")
+    
+    if not isinstance(document_id, int):
+        raise HTTPException(status_code=400, detail="Document ID must be an integer")
     try:
         users = await get_users_collection()
         print(f"Searching for user {user_id} with document {document_id}")
@@ -93,7 +92,7 @@ async def get_document(user_id: str, document_id: int):
             {"documents.$": 1}
         )
         print(f"Found user document: {bool(user)}")
-        if not user or not user.get('documents'):
+        if not bool(user) or not user.get('documents'):
             return None
         
         doc = user['documents'][0]

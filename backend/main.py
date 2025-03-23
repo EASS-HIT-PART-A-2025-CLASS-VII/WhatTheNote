@@ -154,7 +154,7 @@ async def delete_a_document(document_id: int, current_user: User = Depends(get_c
     
 
 @app.post("/documents/{document_id}/query")
-async def query_document(document_id: str, query: QueryRequest, current_user: User = Depends(get_current_user)):
+async def query_document(document_id: int, query: QueryRequest, current_user: User = Depends(get_current_user)):
     # Get document from database
     try:
         document_id = int(document_id)

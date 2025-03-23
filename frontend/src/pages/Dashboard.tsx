@@ -6,11 +6,15 @@ import { Document } from '../types/document';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import SearchFilters from '../components/dashboard/SearchFilters';
 import DocumentTabs from '../components/dashboard/DocumentTabs';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../lib/AuthContext';
 
 // Available subject options
 let subjectOptions = ['All Subjects'];
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -133,56 +137,60 @@ const Dashboard = () => {
     });
   };
 
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1 pt-24 pb-16">
-        <div className="container px-6 mx-auto">
-          {/* In the return statement */}
-          {isLoading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading documents...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-8 text-red-500">
-              Error: {error}
-              <button 
-                className="ml-4 text-blue-500 hover:text-blue-700"
-                onClick={() => window.location.reload()}
-              >
-                Retry
-              </button>
-            </div>
-          ) : (
-            <>
-              <DashboardHeader />
-              <SearchFilters 
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                selectedSubject={selectedSubject}
-                setSelectedSubject={setSelectedSubject}
-                subjectOptions={subjectOptions}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-              />
-              <DocumentTabs 
-                filteredDocuments={filteredDocuments}
-                isUploading={isUploading}
-                handleFileSelect={handleFileSelect}
-                viewMode={viewMode}
-                subjectGroups={subjectGroups}
-                expandedSubjects={expandedSubjects}
-                toggleSubjectExpanded={toggleSubjectExpanded}
-                searchQuery={searchQuery}
-              />
-            </>
-          )}
-        </div>
-      </main>
-      <Footer />
-    </div>
-  );
+  if (user) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1 pt-24 pb-16">
+          <div className="container px-6 mx-auto">
+            {/* In the return statement */}
+            {isLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                <p className="mt-4 text-gray-600">Loading documents...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-8 text-red-500">
+                Error: {error}
+                <button 
+                  className="ml-4 text-blue-500 hover:text-blue-700"
+                  onClick={() => window.location.reload()}
+                >
+                  Retry
+                </button>
+              </div>
+            ) : (
+              <>
+                <DashboardHeader />
+                <SearchFilters 
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  selectedSubject={selectedSubject}
+                  setSelectedSubject={setSelectedSubject}
+                  subjectOptions={subjectOptions}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                />
+                <DocumentTabs 
+                  filteredDocuments={filteredDocuments}
+                  isUploading={isUploading}
+                  handleFileSelect={handleFileSelect}
+                  viewMode={viewMode}
+                  subjectGroups={subjectGroups}
+                  expandedSubjects={expandedSubjects}
+                  toggleSubjectExpanded={toggleSubjectExpanded}
+                  searchQuery={searchQuery}
+                />
+              </>
+            )}
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  } else {
+    navigate('/login');
+  }
 };
 
 export default Dashboard;

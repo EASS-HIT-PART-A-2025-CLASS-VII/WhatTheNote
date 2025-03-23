@@ -7,14 +7,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Card, CardContent } from '../components/ui/card';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import { ChevronLeft, Search, DownloadCloud, Send, Sparkles, Copy, BookOpen, MessageSquare, History } from 'lucide-react';
-
+import { ChevronLeft, Search, DownloadCloud, Send, Sparkles, Copy, BookOpen, MessageSquare, History, FileQuestion } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../lib/AuthContext';
 
 const DocumentView = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const documentId = parseInt(id || '');
   const [document, setDocument] = useState({
-  id: 0,
+  id: null,
   title: '',
   content: '',
   summary: '',
@@ -39,11 +42,6 @@ const DocumentView = () => {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-  
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Failed to fetch document');
-        }
   
         const data = await response.json();
         setDocument({
@@ -105,6 +103,42 @@ const DocumentView = () => {
     navigator.clipboard.writeText(text);
     // Toast would be shown here
   };
+  
+  if (isLoading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1 pt-24 pb-16">
+          <div className="container px-6 mx-auto">
+            <div className="text-center py-10">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <p className="mt-4 text-muted-foreground">Loading document...</p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!document.id) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-1 pt-24 pb-16">
+          <div className="container px-6 mx-auto text-center">
+            <FileQuestion className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">Document Not Found</h2>
+            <p className="text-muted-foreground mb-4">The requested document could not be loaded.</p>
+            <Button asChild>
+              <Link to="/dashboard">Back to Dashboard</Link>
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -135,7 +169,7 @@ const DocumentView = () => {
               <TabsList className="mb-6">
                 <TabsTrigger value="summary">
                   <Sparkles className="mr-2 h-4 w-4" />
-                  AI Summary
+                  Summary
                 </TabsTrigger>
                 <TabsTrigger value="document">
                   <BookOpen className="mr-2 h-4 w-4" />
@@ -143,7 +177,7 @@ const DocumentView = () => {
                 </TabsTrigger>
                 <TabsTrigger value="qa">
                   <MessageSquare className="mr-2 h-4 w-4" />
-                  Q&A With AI
+                  Q&A
                 </TabsTrigger>
                 <TabsTrigger value="history">
                   <History className="mr-2 h-4 w-4" />

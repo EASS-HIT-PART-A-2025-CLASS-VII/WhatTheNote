@@ -34,7 +34,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const response = await fetch('http://localhost:8000/documents', { // Update API endpoint
+        const response = await fetch('http://localhost:8000/documents', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

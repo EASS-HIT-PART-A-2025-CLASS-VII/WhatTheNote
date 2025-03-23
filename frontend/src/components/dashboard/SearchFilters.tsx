@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 import { Search, Grid3X3, ListFilter } from 'lucide-react';
@@ -24,6 +24,18 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   viewMode,
   setViewMode
 }) => {
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768 && viewMode === 'list') {
+        setViewMode('grid');
+      }
+    };
+  
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, [viewMode, setViewMode]);
+  
   return (
     <div className="mb-8 flex flex-col md:flex-row gap-4">
       <div className="relative flex-1">
@@ -55,6 +67,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           size="icon"
           onClick={() => setViewMode('grid')}
           aria-label="Grid view"
+          className="hidden md:inline-flex"
         >
           <Grid3X3 className="h-4 w-4" />
         </Button>
@@ -63,6 +76,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           size="icon"
           onClick={() => setViewMode('list')}
           aria-label="List view"
+          className="hidden md:inline-flex"
         >
           <ListFilter className="h-4 w-4" />
         </Button>

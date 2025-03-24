@@ -9,10 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import { toast } from 'sonner';
 
-// Available subject options
-let subjectOptions = ['All Subjects'];
-
 const Dashboard = () => {
+  const [subjectOptions, setSubjectOptions] = useState<string[]>(['All Subjects']);
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,9 +41,7 @@ const Dashboard = () => {
       // Transform backend data to frontend format
       const transformed = data.map((doc: any) => {
         try {
-          if (!subjectOptions.includes(doc.subject)) {
-            subjectOptions.push(doc.subject);
-          }
+          // Subject filtering handled in useEffect below
           return {
             ...doc,
             uploadedDate: doc.uploadedDate ? new Date(doc.uploadedDate) : new Date(),
@@ -102,6 +98,14 @@ const Dashboard = () => {
     
     setFilteredDocuments(filtered);
     
+    // Update available subjects
+    const uniqueSubjects = ['All Subjects', ...new Set(filtered.map(d => d.subject))].filter(Boolean);
+    setSubjectOptions(uniqueSubjects as string[]);
+
+    if (!uniqueSubjects.includes(selectedSubject)) {
+      setSelectedSubject('All Subjects');
+    }
+
     // Group by subject
     const groups = filtered.reduce((acc, doc) => {
       const subject = doc.subject || 'Uncategorized';

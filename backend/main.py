@@ -8,7 +8,7 @@ from pydantic import BaseModel
 import requests
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 import uuid
 from typing import List
 from pymongo import MongoClient
@@ -47,7 +47,7 @@ async def get_features():
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     db = await get_database()
-    user = await authenticate_user(db, form_data.username, form_data.password)  # Added await
+    user = await authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -76,17 +76,15 @@ async def update_user_me(user_update: UserUpdate = Body(...), current_user: User
         raise HTTPException(status_code=422, detail="Invalid request format - must use JSON body")
 
     # Validate update fields
-    update_data = user_update.dict(exclude_unset=True)
+    update_data = user_update.model_dump(exclude_unset=True)
     
     if not update_data:
         raise HTTPException(status_code=400, detail="No valid fields to update")
     
-    # Update user in database
     update_result = await update_user(current_user.id, update_data)
     if not update_result.modified_count:
         raise HTTPException(status_code=500, detail="Failed to update user")
     
-    # Fetch updated user document using async method
     users_collection = await get_users_collection()
     updated_document = await users_collection.find_one({"id": current_user.id})
     return User(**updated_document)
@@ -104,7 +102,6 @@ async def register_user(user_data: dict = Body(...)):
     password = user_data.get("password")
     name = user_data.get("name")
     
-    # Add await to the database call
     existing_user = await get_user_by_email(email)
     if existing_user:
         raise HTTPException(
@@ -124,7 +121,6 @@ async def register_user(user_data: dict = Body(...)):
         "createdAt": datetime.now(timezone.utc)
     }
     
-    # Add await if create_user is async
     await create_user(user_data)
     
     return User(
@@ -156,22 +152,17 @@ async def delete_a_document(document_id: int, current_user: User = Depends(get_c
 
 @app.post("/documents/{document_id}/query")
 async def query_document(document_id: int, query: QueryRequest, current_user: User = Depends(get_current_user)):
-    # Get document from database
-    try:
-        document_id = int(document_id)
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid document ID format")
+    if not isinstance(document_id, int):
+        raise HTTPException(status_code=400, detail="Document ID must be an integer")
 
-    # Get document from database
     doc = await get_document(current_user.id, document_id)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    # Create LLM prompt with document context
+    # LLM prompt with document context
     prompt = f"Document: {doc['content']}\n\nQuestion: {query.question}\nAnswer:"
     
     try:
-        # Call Ollama API
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 os.getenv("OLLAMA_BASE_URL") + "/api/generate",
@@ -185,7 +176,6 @@ async def query_document(document_id: int, query: QueryRequest, current_user: Us
             response.raise_for_status()
             llm_response = response.json()
             
-            # Save query to database
             query_data = {
                 "question": query.question,
                 "answer": llm_response.get("response").strip(),
@@ -212,7 +202,6 @@ async def upload_document(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user)
 ):
-    # Read file content
     contents = file.file.read()
     
     # Extract text from PDF
@@ -223,12 +212,10 @@ async def upload_document(
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid PDF file")
 
-    # Generate title and summary using Ollama
     ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
     
-    prompt = f"""Generate a JSON object with 'title' (3-4 words max), 'subject' (EXACTLY 1-2 words), and 'summary' (30-40 words) for this text:
-    {text[:2000]}... [truncated]
-    Return ONLY valid JSON without additional formatting."""
+    prompt = f"""Based on this document content, with your own words and understanding of the content, generate a JSON object with a title 'title' (4 words MAX),
+              subject 'subject' (1-2 words MAX), and summary 'summary' (30-40 words MAX). Content: {text[:2000]}. Return ONLY valid JSON without additional formatting"""
     
     try:
         response = requests.post(
@@ -241,14 +228,13 @@ async def upload_document(
             }
         )
         response.raise_for_status()
-        # Get raw response and validate JSON structure
         response_data = response.json()
         if 'response' not in response_data:
             raise ValueError("Missing 'response' field in Ollama output")
         
-        # Clean and parse JSON response
         cleaned_response = response_data['response'].replace('```json', '').replace('```', '').strip()
         ai_data = json.loads(cleaned_response)
+        print(ai_data['title'])
     except Exception as e:
         print(f"Document processing error: {str(e)}")
         raise HTTPException(
@@ -271,6 +257,5 @@ async def upload_document(
         lastViewed=datetime.now()
     )
 
-    # Save to database
-    await add_document_to_user(current_user.id, document.dict())
+    await add_document_to_user(current_user.id, document.model_dump())
     return document

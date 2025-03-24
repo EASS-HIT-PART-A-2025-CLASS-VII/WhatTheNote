@@ -10,18 +10,13 @@ from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 from .db import get_user_by_email, create_user, update_user, delete_user
 
-# Load environment variables
 load_dotenv()
 
-# Secret key for JWT token from environment variables
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
-# Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Models using pydantic

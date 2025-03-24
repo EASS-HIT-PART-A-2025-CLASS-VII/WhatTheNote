@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { cn } from '../../lib/utils';
 
@@ -26,19 +25,19 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({ className }) => {
     <div className={cn("relative font-sans font-bold inline-flex", className)}>
       <div className="flex relative">
         <span className={cn(
-          "text-primary transition-opacity duration-300",
+          "text-primary transition-opacity duration-300 logo-font",
           isAnimating ? "opacity-100" : "opacity-70"
         )}>
           What
         </span>
         <span className={cn(
-          "text-primary transition-opacity duration-300 delay-200",
+          "text-primary transition-opacity duration-300 delay-200 logo-font",
           isAnimating ? "opacity-100" : "opacity-70"
         )}>
           The
         </span>
         <span className={cn(
-          "text-primary transition-opacity duration-300 delay-400",
+          "text-primary transition-opacity duration-300 delay-400 logo-font",
           isAnimating ? "opacity-100" : "opacity-70"
         )}>
           Note

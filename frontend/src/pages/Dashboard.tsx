@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -8,6 +7,7 @@ import SearchFilters from '../components/dashboard/SearchFilters';
 import DocumentTabs from '../components/dashboard/DocumentTabs';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
+import { toast } from 'sonner';
 
 // Available subject options
 let subjectOptions = ['All Subjects'];
@@ -72,6 +72,18 @@ const Dashboard = () => {
   };
   fetchDocuments();
   }, [user, navigate]);
+
+  useEffect(() => {
+    const handleDocumentDeleted = (e: CustomEvent) => {
+      const deletedId = e.detail;
+      setDocuments(prev => prev.filter(doc => doc.id !== deletedId));
+    };
+
+    window.addEventListener('document-deleted', handleDocumentDeleted as EventListener);
+    return () => {
+      window.removeEventListener('document-deleted', handleDocumentDeleted as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     let filtered = [...documents];

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../../components/ui/alert-dialog';
 import { cn } from '../../lib/utils';
 import { format } from 'date-fns';
 import { deleteDocument } from '../../lib/api';
@@ -39,6 +40,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
   summary
 }) => {
   const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
   return (
     <Card 
       className={cn(
@@ -79,22 +81,45 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuItem
               className="text-destructive focus:bg-destructive/10 focus:text-destructive-foreground"
-              onSelect={async (e) => {
-    e.preventDefault();
-    const confirmed = window.confirm('Are you sure you want to delete this document?');
-    if (confirmed) {
-      try {
-        await deleteDocument(id);
-        window.location.reload();
-        navigate('/dashboard');
-      } catch (error) {
-        toast.error('Failed to delete document. Please try again.');
-      }
-    }
-  }}
+              onSelect={(e) => {
+                e.preventDefault();
+              }}
             >
-              <Trash className="h-4 w-4 mr-2" />
-              Delete Document
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <div className="flex items-center w-full">
+                    <Trash className="h-4 w-4 mr-2" />
+                    Delete Document
+                  </div>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your
+                      document and remove its data from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={async () => {
+                      setIsDeleting(true);
+                      try {
+                        await deleteDocument(id);
+                        toast.success(`Document successfully deleted!`);
+                        window.dispatchEvent(new CustomEvent('document-deleted', { detail: id }));
+                      } catch (error) {
+                        toast.error(`Document deletion error!`);
+                        console.error('Document deletion error:', error);
+                      } finally {
+                        setIsDeleting(false);
+                      }
+                    }} disabled={isDeleting}>
+                      {isDeleting ? 'Deleting...' : 'Delete Document'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

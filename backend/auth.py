@@ -8,7 +8,6 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
-
 from .db import get_user_by_email, create_user, update_user, delete_user
 
 # Load environment variables
@@ -25,7 +24,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# Models
+# Models using pydantic
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -44,13 +43,11 @@ class UserUpdate(BaseModel):
     name: Optional[str] = None
     email: Optional[str] = None
     
-# Document query model
 class Query(BaseModel):
     question: str
     answer: str
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
-# Document model with details
 class DocumentWithDetails(BaseModel):
     id: int
     title: str
@@ -76,6 +73,7 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
+# User operations
 async def get_user(db, email: str):
     user_dict = await get_user_by_email(email)
     if user_dict:

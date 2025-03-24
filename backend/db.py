@@ -6,10 +6,8 @@ from fastapi import HTTPException
 from datetime import datetime
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# MongoDB connection details
 DB_URL = os.getenv("DB_URL")
 DB_NAME = os.getenv("DB_NAME")
 
@@ -81,7 +79,6 @@ async def get_next_document_id():
     return counter["seq"]
 
 async def get_document(user_id: str, document_id: int):
-    
     if not isinstance(document_id, int):
         raise HTTPException(status_code=400, detail="Document ID must be an integer")
     try:

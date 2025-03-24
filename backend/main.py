@@ -13,8 +13,9 @@ import uuid
 from typing import List
 from pymongo import MongoClient
 from bson import ObjectId
-from backend.auth import Token, User, UserInDB, DocumentWithDetails, Query, authenticate_user, create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_password_hash, UserUpdate
-from backend.db import create_user, get_user_by_email, add_document_to_user, get_user_documents, update_document, add_query_to_document, update_user, get_users_collection, delete_user, get_database, get_document, get_next_document_id, delete_document
+from backend.auth import *
+from backend.db import *
+
 
 app = FastAPI()
 

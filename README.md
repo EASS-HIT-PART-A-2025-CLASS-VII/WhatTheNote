@@ -50,12 +50,11 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 - 🚧 RAG-enhanced document querying
 - 🚧 PDF compression before processing
 - 🚧 Advanced document analytics
-- 🚧 Collaborative document spaces
 
 ## Getting Started
 
 ### Prerequisites
-- Python 3.9+
+- Python 3.13+
 - Node.js 18+
 - MongoDB instance
 - Ollama server running locally

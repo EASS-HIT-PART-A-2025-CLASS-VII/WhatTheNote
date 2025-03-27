@@ -5,7 +5,7 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Label } from '../components/ui/label';
 import { motion } from 'framer-motion';
-import { Lock } from 'lucide-react';
+import { Lock, Loader2 } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
@@ -16,10 +16,12 @@ const Login = () => {
     password: '',
   });
   const [error, setError] = useState('');
+const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
       // Import the login function from our API utility
@@ -39,6 +41,8 @@ const Login = () => {
     } catch (err) {
       setError('An error occurred during login. Please try again.');
       console.error('Login error:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -104,8 +108,10 @@ const Login = () => {
                     </div>
                   )}
 
-                  <Button type="submit" className="w-full">
-                    Sign in
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : 'Sign in'}
                   </Button>
 
                   <div className="text-center text-sm text-muted-foreground">

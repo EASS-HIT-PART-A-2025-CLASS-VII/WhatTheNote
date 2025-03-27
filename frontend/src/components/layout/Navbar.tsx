@@ -3,15 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import AnimatedLogo from '../../components/ui/AnimatedLogo';
-import { Menu, X, Moon, Sun, User } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../lib/AuthContext';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const location = useLocation();
+    const location = useLocation();
   const { user, logout } = useAuth();
 
   useEffect(() => {
@@ -39,10 +38,7 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(false);
   }, [location]);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
+  
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -77,14 +73,7 @@ const Navbar: React.FC = () => {
               Home
             </Link>
             
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleDarkMode}
-              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
+            
             {user ? (
               <>
                 <Link 
@@ -119,15 +108,7 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleDarkMode}
-              className="mr-2"
-              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
+            
             <Button
               variant="ghost"
               size="icon"

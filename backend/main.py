@@ -69,7 +69,7 @@ async def update_user_me(user_update: UserUpdate = Body(...), current_user: User
     # Check if email exists
     try:
         if user_update.email is not None:
-            existing_user = await get_user_by_email(user_update.email)  # Added await
+            existing_user = await get_user_by_email(user_update.email)
             if existing_user and existing_user['id'] != current_user.id:
                 raise HTTPException(status_code=400, detail="Email already registered")
     except AttributeError:
@@ -91,7 +91,7 @@ async def update_user_me(user_update: UserUpdate = Body(...), current_user: User
 
 @app.delete("/users/me")
 async def delete_user_me(current_user: User = Depends(get_current_user)):
-    result = await delete_user(current_user.id)  # Added await
+    result = await delete_user(current_user.id)
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "User deleted successfully"}

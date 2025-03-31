@@ -9,6 +9,7 @@ from passlib.context import CryptContext
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 from .db import get_user_by_email, create_user, update_user, delete_user
+from .schemas import *
 
 load_dotenv()
 
@@ -16,57 +17,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-# Models using pydantic
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-class TokenData(BaseModel):
-    email: Optional[str] = None
-
-class User(BaseModel):
-    id: str
-    name: str
-    email: str
-    createdAt: datetime = Field(default_factory=datetime.utcnow)
-    formatted_created_at: str = Field(default_factory=lambda: datetime.utcnow().strftime('%d/%m/%Y'))
-
-class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-    
-class Query(BaseModel):
-    question: str
-    answer: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-
-class DocumentWithDetails(BaseModel):
-    id: int
-    title: str
-    subject: str
-    content: str
-    summary: str
-    uploadedDate: datetime = Field(default_factory=datetime.utcnow)
-    lastViewed: Optional[datetime] = None
-
-    class Config:
-        json_encoders = {
-            datetime: lambda dt: dt.isoformat()
-        }
-
-class UserInDB(User):
-    documents: List[DocumentWithDetails] = []
-    hashed_password: str
-
-# Helper functions
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
 
 # User operations
 async def get_user(db, email: str):

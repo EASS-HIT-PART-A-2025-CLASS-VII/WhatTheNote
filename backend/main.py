@@ -15,6 +15,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 from backend.auth import *
 from backend.db import *
+from .schemas import QueryRequest
 
 
 app = FastAPI()
@@ -29,12 +30,13 @@ app.add_middleware(
     max_age=600,  # Cache preflight requests for 10 minutes
 )
 
-class QueryRequest(BaseModel):
-    question: str
-
 @app.get("/")
 async def read_root():
     return {"message": "Hello, World!"}
+
+@app.get('/favicon.ico')
+def favicon():
+    return {}
 
 @app.get("/features")
 async def get_features():
@@ -129,6 +131,11 @@ async def register_user(user_data: dict = Body(...)):
         email=email,
         createdAt=user_data["createdAt"]
     )
+    
+@app.get("/documents", response_model=List[DocumentWithDetails])
+async def get_documents(current_user: User = Depends(get_current_user)):
+    documents = await get_user_documents(current_user.id)
+    return documents
 
 @app.get("/documents/{document_id}")
 async def get_single_document(document_id: int, current_user: User = Depends(get_current_user)):
@@ -136,11 +143,6 @@ async def get_single_document(document_id: int, current_user: User = Depends(get
     if not document:
         raise HTTPException(status_code=404, detail="Document not found")
     return document
-
-@app.get("/documents", response_model=List[DocumentWithDetails])
-async def get_documents(current_user: User = Depends(get_current_user)):
-    documents = await get_user_documents(current_user.id)
-    return documents
 
 @app.delete('/documents/{document_id}')
 async def delete_a_document(document_id: int, current_user: User = Depends(get_current_user)):

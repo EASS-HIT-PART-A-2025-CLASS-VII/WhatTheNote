@@ -17,7 +17,6 @@ from backend.auth import *
 from backend.db import *
 from .schemas import QueryRequest
 
-
 app = FastAPI()
 
 app.add_middleware(

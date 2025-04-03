@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 from .db import get_user_by_email, create_user, update_user, delete_user
 from .schemas import *
+from .utils import verify_password, get_password_hash
 
 load_dotenv()
 

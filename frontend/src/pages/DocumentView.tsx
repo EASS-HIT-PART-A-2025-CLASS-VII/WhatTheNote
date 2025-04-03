@@ -10,6 +10,15 @@ import Footer from '../components/layout/Footer';
 import { ChevronLeft, Search, DownloadCloud, Send, Sparkles, Copy, BookOpen, MessageSquare, History, FileQuestion } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
+import { getRandomItems } from '../lib/utils';
+
+const sampleQuestions = [
+  "What are the key points of this document?",
+  "Summarize the main ideas of the document.",
+  "Who is this document relevant for?",
+  "How current is this information and when was it last updated?",
+  "Are there any recommended actions or next steps?"
+];
 
 const DocumentView = () => {
   const { user } = useAuth();
@@ -262,7 +271,7 @@ const DocumentView = () => {
                           onClick={handleAskQuestion} 
                           disabled={!question.trim() || isQuerying}
                         >
-                          {isQuerying ? 'Processing...' : 'Ask'}
+                          {isQuerying ? 'Processing...' : 'Ask AI'}
                           <Send className="ml-2 h-4 w-4" />
                         </Button>
                       </div>
@@ -290,6 +299,20 @@ const DocumentView = () => {
                           <p className="text-sm text-muted-foreground">
                             Ask your first question about this document.
                           </p>
+                          <div className="mt-4 flex justify-center gap-2">
+                            {getRandomItems(sampleQuestions, 3).map((question) => (
+                              <Button
+                                key={question}
+                                variant="outline"
+                                size="lg"
+                                onClick={() => setQuestion(question)}
+                                disabled={!question.trim() || isQuerying}
+                                className="text-sm px-4 py-1 hover:bg-primary/10 transition-colors"
+                              >
+                                {question}
+                              </Button>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>

@@ -46,11 +46,6 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 - Type-safe API contracts
 - CORS-enabled API security
 
-### Upcoming Features
-- 🚧 RAG-enhanced document querying
-- 🚧 PDF compression before processing
-- 🚧 Advanced document analytics
-
 ## Getting Started
 
 ### Prerequisites

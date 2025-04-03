@@ -1,4 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional, List
+from datetime import datetime, timedelta
 
 class Token(BaseModel):
     access_token: str

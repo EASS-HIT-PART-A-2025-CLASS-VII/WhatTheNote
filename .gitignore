@@ -48,3 +48,4 @@ tsconfig*.json
 
 # Other
 *.todo
+backend/requirements.txt

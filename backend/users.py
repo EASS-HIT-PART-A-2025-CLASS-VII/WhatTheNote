@@ -7,7 +7,12 @@ from typing import Optional
 import os
 
 from .schemas import User, UserUpdate, Token
-from .auth import get_current_user, authenticate_user, get_password_hash, create_access_token
+from .auth import (
+    get_current_user,
+    authenticate_user,
+    get_password_hash,
+    create_access_token,
+)
 from .db import (
     get_database,
     get_user_by_email,
@@ -21,6 +26,7 @@ load_dotenv()
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 router = APIRouter()
+
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -38,19 +44,25 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+
 @router.get("/users/me", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
 
+
 @router.put("/users/me")
-async def update_user_me(user_update: UserUpdate = Body(...), current_user: User = Depends(get_current_user)):
+async def update_user_me(
+    user_update: UserUpdate = Body(...), current_user: User = Depends(get_current_user)
+):
     try:
         if user_update.email is not None:
             existing_user = await get_user_by_email(user_update.email)
-            if existing_user and existing_user['id'] != current_user.id:
+            if existing_user and existing_user["id"] != current_user.id:
                 raise HTTPException(status_code=400, detail="Email already registered")
     except AttributeError:
-        raise HTTPException(status_code=422, detail="Invalid request format - must use JSON body")
+        raise HTTPException(
+            status_code=422, detail="Invalid request format - must use JSON body"
+        )
 
     update_data = user_update.model_dump(exclude_unset=True)
     if not update_data:
@@ -64,12 +76,14 @@ async def update_user_me(user_update: UserUpdate = Body(...), current_user: User
     updated_document = await users_collection.find_one({"id": current_user.id})
     return User(**updated_document)
 
+
 @router.delete("/users/me")
 async def delete_user_me(current_user: User = Depends(get_current_user)):
     result = await delete_user(current_user.id)
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "User deleted successfully"}
+
 
 @router.post("/register", response_model=User)
 async def register_user(user_data: dict = Body(...)):
@@ -80,8 +94,7 @@ async def register_user(user_data: dict = Body(...)):
     existing_user = await get_user_by_email(email)
     if existing_user:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
         )
 
     user_id = str(uuid.uuid4())
@@ -93,14 +106,9 @@ async def register_user(user_data: dict = Body(...)):
         "email": email,
         "hashed_password": hashed_password,
         "documents": [],
-        "createdAt": datetime.now(timezone.utc)
+        "createdAt": datetime.now(timezone.utc),
     }
 
     await create_user(user_data)
 
-    return User(
-        id=user_id,
-        name=name,
-        email=email,
-        createdAt=user_data["createdAt"]
-    )
+    return User(id=user_id, name=name, email=email, createdAt=user_data["createdAt"])

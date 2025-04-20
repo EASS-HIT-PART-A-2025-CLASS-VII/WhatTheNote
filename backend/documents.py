@@ -16,34 +16,46 @@ from .db import (
     add_document_to_user,
     get_next_document_id,
     delete_document,
-    update_document_last_viewed
+    update_document_last_viewed,
 )
 
 router = APIRouter()
+
 
 @router.get("/documents", response_model=List[DocumentWithDetails])
 async def get_documents(current_user: User = Depends(get_current_user)):
     documents = await get_user_documents(current_user.id)
     return documents
 
+
 @router.get("/documents/{document_id}")
-async def get_single_document(document_id: int, current_user: User = Depends(get_current_user)):
+async def get_single_document(
+    document_id: int, current_user: User = Depends(get_current_user)
+):
     document = await get_document(current_user.id, document_id)
     if not document:
         raise HTTPException(status_code=404, detail="Document not found")
-    
+
     await update_document_last_viewed(current_user.id, document_id)
     return document
 
-@router.delete('/documents/{document_id}')
-async def delete_a_document(document_id: int, current_user: User = Depends(get_current_user)):
+
+@router.delete("/documents/{document_id}")
+async def delete_a_document(
+    document_id: int, current_user: User = Depends(get_current_user)
+):
     result = await delete_document(current_user.id, document_id)
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Document not found")
     return {"message": "Document deleted successfully"}
 
+
 @router.post("/documents/{document_id}/query")
-async def query_document(document_id: int, query: QueryRequest, current_user: User = Depends(get_current_user)):
+async def query_document(
+    document_id: int,
+    query: QueryRequest,
+    current_user: User = Depends(get_current_user),
+):
     if not isinstance(document_id, int):
         raise HTTPException(status_code=400, detail="Document ID must be an integer")
 
@@ -55,15 +67,12 @@ async def query_document(document_id: int, query: QueryRequest, current_user: Us
 
     try:
         import httpx
+
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 os.getenv("OLLAMA_BASE_URL") + "/api/generate",
-                json={
-                    "model": "llama3.2:latest",
-                    "prompt": prompt,
-                    "stream": False
-                },
-                timeout=30
+                json={"model": "llama3.2:latest", "prompt": prompt, "stream": False},
+                timeout=30,
             )
             response.raise_for_status()
             llm_response = response.json()
@@ -71,28 +80,34 @@ async def query_document(document_id: int, query: QueryRequest, current_user: Us
             query_data = {
                 "question": query.question,
                 "answer": llm_response.get("response").strip(),
-                "timestamp": datetime.utcnow()
+                "timestamp": datetime.utcnow(),
             }
-            result = await add_query_to_document(current_user.id, document_id, query_data)
+            result = await add_query_to_document(
+                current_user.id, document_id, query_data
+            )
             if not result.modified_count:
-                raise HTTPException(status_code=500, detail="Failed to save query to database")
+                raise HTTPException(
+                    status_code=500, detail="Failed to save query to database"
+                )
 
             return {
                 "question": query.question,
                 "answer": llm_response.get("response").strip(),
-                "timestamp": datetime.utcnow()
+                "timestamp": datetime.utcnow(),
             }
     except httpx.RequestError as e:
         raise HTTPException(status_code=503, detail=f"Ollama API unavailable: {str(e)}")
     except (KeyError, json.JSONDecodeError) as e:
-        raise HTTPException(status_code=502, detail=f"Invalid response format from Ollama: {str(e)}")
+        raise HTTPException(
+            status_code=502, detail=f"Invalid response format from Ollama: {str(e)}"
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"LLM query failed: {str(e)}")
 
+
 @router.post("/documents/upload")
 async def upload_document(
-    file: UploadFile = File(...),
-    current_user: User = Depends(get_current_user)
+    file: UploadFile = File(...), current_user: User = Depends(get_current_user)
 ):
     contents = file.file.read()
 
@@ -115,24 +130,27 @@ async def upload_document(
                 "model": "llama3.2:latest",
                 "prompt": prompt,
                 "format": "json",
-                "stream": False
-            }
+                "stream": False,
+            },
         )
         response.raise_for_status()
         response_data = response.json()
-        if 'response' not in response_data:
+        if "response" not in response_data:
             raise ValueError("Missing 'response' field in Ollama output")
 
-        cleaned_response = response_data['response'].replace('```json', '').replace('```', '').strip()
+        cleaned_response = (
+            response_data["response"].replace("```json", "").replace("```", "").strip()
+        )
         ai_data = json.loads(cleaned_response)
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Document processing failed: {str(e)}"
+            status_code=500, detail=f"Document processing failed: {str(e)}"
         )
 
     title_words = ai_data["title"].split()[:4]
-    ai_data["title"] = ' '.join(title_words) if len(title_words) >= 1 else "Untitled Document"
+    ai_data["title"] = (
+        " ".join(title_words) if len(title_words) >= 1 else "Untitled Document"
+    )
 
     document = DocumentWithDetails(
         id=await get_next_document_id(),
@@ -141,7 +159,7 @@ async def upload_document(
         content=text,
         summary=ai_data["summary"],
         uploadedDate=datetime.now(),
-        lastViewed=None
+        lastViewed=None,
     )
 
     await add_document_to_user(current_user.id, document.model_dump())

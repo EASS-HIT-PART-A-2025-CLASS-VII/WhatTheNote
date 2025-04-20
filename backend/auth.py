@@ -19,12 +19,14 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 # User operations
 async def get_user(db, email: str):
     user_dict = await get_user_by_email(email)
     if user_dict:
         return UserInDB(**user_dict)
     return None
+
 
 async def authenticate_user(db, email: str, password: str):
     user = await get_user(db, email)
@@ -33,6 +35,7 @@ async def authenticate_user(db, email: str, password: str):
     if not verify_password(password, user.hashed_password):
         return False
     return user
+
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -43,6 +46,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(

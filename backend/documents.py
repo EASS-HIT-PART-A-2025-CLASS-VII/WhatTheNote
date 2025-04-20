@@ -16,6 +16,7 @@ from .db import (
     add_document_to_user,
     get_next_document_id,
     delete_document,
+    update_document_last_viewed
 )
 
 router = APIRouter()
@@ -30,6 +31,8 @@ async def get_single_document(document_id: int, current_user: User = Depends(get
     document = await get_document(current_user.id, document_id)
     if not document:
         raise HTTPException(status_code=404, detail="Document not found")
+    
+    await update_document_last_viewed(current_user.id, document_id)
     return document
 
 @router.delete('/documents/{document_id}')
@@ -138,7 +141,7 @@ async def upload_document(
         content=text,
         summary=ai_data["summary"],
         uploadedDate=datetime.now(),
-        lastViewed=datetime.now()
+        lastViewed=None
     )
 
     await add_document_to_user(current_user.id, document.model_dump())

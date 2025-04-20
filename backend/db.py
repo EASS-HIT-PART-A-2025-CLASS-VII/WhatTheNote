@@ -60,6 +60,13 @@ async def update_document(user_id: str, document_id: int, update_data: dict):
         {"id": user_id, "documents.id": document_id},
         {"$set": {"documents.$": update_data}}
     )
+    
+async def update_document_last_viewed(user_id: str, document_id: int):
+    users = await get_users_collection()
+    return await users.update_one(
+        {"id": user_id, "documents.id": document_id},
+        {"$set": {"documents.$.lastViewed": datetime.now()}}
+    )
 
 async def add_query_to_document(user_id: str, document_id: int, query_data: dict):
     users = await get_users_collection()
@@ -83,12 +90,12 @@ async def get_document(user_id: str, document_id: int):
         raise HTTPException(status_code=400, detail="Document ID must be an integer")
     try:
         users = await get_users_collection()
-        print(f"Searching for user {user_id} with document {document_id}")
+        # print(f"Searching for user {user_id} with document {document_id}")
         user = await users.find_one(
             {"id": user_id, "documents.id": document_id},
             {"documents.$": 1}
         )
-        print(f"Found user document: {bool(user)}")
+        # print(f"Found user document: {bool(user)}")
         if not bool(user) or not user.get('documents'):
             return None
         
@@ -101,7 +108,7 @@ async def get_document(user_id: str, document_id: int):
             "summary": doc.get("summary", ""),
             "queries": doc.get("queries", []),
             "uploadedDate": doc["uploadedDate"].isoformat(),
-            "lastViewed": doc.get("lastViewed", datetime.utcnow()).strftime('%d/%m/%Y'),
+            "lastViewed": datetime.now()
         }
     except InvalidId:
         raise HTTPException(status_code=400, detail="Invalid document ID")

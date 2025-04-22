@@ -1,0 +1,48 @@
+services:
+  backend:
+    build: ./backend
+    container_name: whatthenote-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+      - ollama
+
+  frontend:
+    build: ./frontend
+    container_name: whatthenote-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  mongo:
+    image: mongo:6
+    container_name: whatthenote-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: whatthenote-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: curl --fail http://localhost:11434/api/tags || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+
+
+volumes:
+  mongo_data:
+  ollama_data:

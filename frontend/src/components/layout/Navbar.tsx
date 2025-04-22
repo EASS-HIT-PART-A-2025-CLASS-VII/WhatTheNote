@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
                   <User className="h-4 w-4" />
                   <span>{user.name}</span>
                 </Link>
-                <Button variant="outline" className="mr-4" onClick={logout}>Sign Out</Button>
+                <Button variant="outline" className="mr-4" onClick={() => { logout(); window.location.href = '/'; }}>Sign Out</Button>
               </>
             ) : (
               <>
@@ -157,7 +157,7 @@ const Navbar: React.FC = () => {
                 <User className="h-4 w-4" />
                 <span>{user.name}</span>
               </Link>
-              <Button variant="outline" className="w-full mb-2" onClick={logout}>Sign Out</Button>
+              <Button className="w-full" onClick={() => { logout(); window.location.href = '/'; }}>Sign Out</Button>
             </>
           ) : (
             <>

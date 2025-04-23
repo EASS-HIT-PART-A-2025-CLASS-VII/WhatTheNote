@@ -29,18 +29,15 @@ services:
       - mongo_data:/data/db
 
   ollama:
-    image: ollama/ollama:latest
+    build:
+      context: .
+      dockerfile: ollama.Dockerfile
     container_name: whatthenote-ollama
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
-    healthcheck:
-      test: curl --fail http://localhost:11434/api/tags || exit 1
-      interval: 15s
-      timeout: 10s
-      retries: 20
-      start_period: 60s
+
 
 
 volumes:

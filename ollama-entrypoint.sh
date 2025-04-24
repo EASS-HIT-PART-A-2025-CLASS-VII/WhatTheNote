@@ -10,8 +10,8 @@ until curl --fail http://ollama:11434/api/tags; do
   sleep 2
 done
 
-# Pull the tinyllama model
-ollama pull llama3.2
+# Pull the ollama model
+ollama pull gemma3:1b
 
 # Wait for background Ollama process (keep container running)
 wait

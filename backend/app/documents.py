@@ -60,14 +60,13 @@ async def query_document(
     query: QueryRequest,
     current_user: User = Depends(get_current_user),
 ):
-    if not isinstance(document_id, int):
-        raise HTTPException(status_code=400, detail="Document ID must be an integer")
-
     doc = await get_document(current_user.id, document_id)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    prompt = f"Document: {doc['content']}\n\nQuestion: {query.question}\nAnswer:"
+    prompt = f"""Answer the question based only on the document content below. 
+                If needed, use Markdown formatting to improve clarity. Respond with the answer only — no explanations or extra text. 
+                Document: {doc['content']} Question: {query.question} Answer:"""
 
     ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
 
@@ -76,7 +75,7 @@ async def query_document(
             response = await client.post(
                 ollama_url,
                 json={
-                    "model": "llama3.2:latest",
+                    "model": "gemma3:1b",
                     "prompt": prompt,
                     "stream": False
                 }
@@ -135,14 +134,15 @@ async def upload_document(
 
     ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
 
-    prompt = f"""Based on this document content, with your own words and understanding of the content, generate a JSON object with a title 'title' (4 words MAX),
-              subject 'subject' (1-2 words MAX), and summary 'summary' (30-40 words MAX). Content: {text[:2000]}. Return ONLY valid JSON without additional formatting"""
+    prompt = f"""Based on this document content, with your own words and understanding of the content, generate a JSON object with a title 'title' (exactly and only up to 5 concise, descriptive words),
+              subject 'subject' (2–3 precise words), and summary 'summary' (30-40 words MAX). Content: {text[:2000]}. Return ONLY valid JSON without additional formatting"""
+
 
     try:
         response = requests.post(
             ollama_url,
             json={
-                "model": "llama3.2:latest",
+                "model": "gemma3:1b",
                 "prompt": prompt,
                 "format": "json",
                 "stream": False,

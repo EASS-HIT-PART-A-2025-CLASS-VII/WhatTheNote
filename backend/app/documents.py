@@ -5,8 +5,7 @@ import os
 import requests
 import json
 import httpx
-import io
-from PyPDF2 import PdfReader
+import fitz
 import logging
 
 logger = logging.getLogger(__name__)
@@ -64,9 +63,10 @@ async def query_document(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    prompt = f"""Answer the question based only on the document content below. 
-                If needed, use Markdown formatting to improve clarity. Respond with the answer only — no explanations or extra text. 
-                Document: {doc['content']} Question: {query.question} Answer:"""
+    prompt = f"""Based on the following document content, answer the user's question. 
+                Document Content: {doc['content']} User Question: {query.question}
+                Respond with the answer only, make it concised.
+                """
 
     ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
 
@@ -127,21 +127,24 @@ async def upload_document(
 
     text = ""
     try:
-        pdf = PdfReader(io.BytesIO(contents))
-        text = "\n".join([page.extract_text() for page in pdf.pages])
+        with fitz.open(stream=contents) as doc:  # No filetype param
+            text = "\n".join(page.get_text() for page in doc)
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid PDF file")
 
     ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
 
-    prompt = f"""Using your own understanding, generate a JSON object from the following content with:
-                - "title": a short and concised title (max 5 words),
-                - "subject": up to 3 words,
-                - "summary": max 40 words.
-
-                Content: {text[:2000]}
-                Return **only** valid JSON, no extra text."""
-
+    prompt = f"""
+    Analyze the following content:
+    -- START OF CONTENT --
+    {text}
+    -- END OF CONTENT --
+    Return a concise JSON object with the following structure:
+    - "title": a brief, meaningful title that's relevant to the whole content (max 5 words)
+    - "subject": most relevant keyword
+    - "summary": a short summary (max 40 words)
+    Respond with **only** valid JSON. No explanations, markdown, or extra text.
+    """
 
     try:
         response = requests.post(

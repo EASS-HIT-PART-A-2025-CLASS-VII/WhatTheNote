@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -11,6 +11,9 @@ import { ChevronLeft, Search, DownloadCloud, Send, Sparkles, Copy, BookOpen, Mes
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import { getRandomItems } from '../lib/utils';
+import Markdown from 'markdown-to-jsx';
+import ReactMarkdown from 'react-markdown';
+import rehypeReact from 'rehype-react';
 
 const sampleQuestions = [
   "What are the key points of this document?",
@@ -36,10 +39,11 @@ const DocumentView = () => {
 });
   const [question, setQuestion] = useState('');
   const [isQuerying, setIsQuerying] = useState(false);
-  const [queries, setQueries] = useState([]);
+  const [queries, setQueries] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const randomQuestions = useMemo(() => getRandomItems(sampleQuestions, 3), []);
   
   // Fetch document data from API
   React.useEffect(() => {
@@ -282,13 +286,13 @@ const DocumentView = () => {
                         queries.map((query, index) => (
                           <div key={index} className="border rounded-lg p-4 animate-scale-in">
                             <div className="flex items-start justify-between mb-2">
-                              <div className="font-medium">{(query as { question: string }).question}</div>
+                              <div className="font-bold">{"Question: " + (query as { question: string }).question}</div>
                               <div className="text-xs text-muted-foreground">
                                 {new Date((query as { timestamp: Date }).timestamp).toLocaleTimeString()} {new Date((query as { timestamp: Date }).timestamp).toLocaleDateString('en-GB')}
                               </div>
                             </div>
-                            <div className="text-muted-foreground text-sm">
-                              {(query as { answer: string }).answer}
+                            <div>
+                              <Markdown>{query.answer}</Markdown>
                             </div>
                           </div>
                         ))
@@ -300,18 +304,16 @@ const DocumentView = () => {
                             Ask your first question about this document.
                           </p>
                           <div className="mt-4 flex justify-center gap-2">
-                            {getRandomItems(sampleQuestions, 3).map((question) => (
-                              <Button
-                                key={question}
-                                variant="outline"
-                                size="lg"
-                                onClick={() => setQuestion(question)}
-                                disabled={!question.trim() || isQuerying}
-                                className="text-sm px-4 py-1 hover:bg-primary/10 transition-colors"
-                              >
-                                {question}
-                              </Button>
-                            ))}
+                          {randomQuestions.map((q, index) => (
+                            <Button 
+                              key={index} 
+                              variant="outline" 
+                              className="text-left h-auto"
+                              onClick={() => setQuestion(q)}
+                            >
+                              {q}
+                            </Button>
+                          ))}
                           </div>
                         </div>
                       )}
@@ -345,7 +347,7 @@ const DocumentView = () => {
                           </div>
                           {expandedIndex === index && (
                             <div className="text-muted-foreground text-sm mt-2 bg-muted/5 p-3 rounded-lg transition-all duration-300">
-                            {(query as { answer: string }).answer}
+                              <Markdown>{query.answer}</Markdown>
                             </div>
                           )}
                         </div>

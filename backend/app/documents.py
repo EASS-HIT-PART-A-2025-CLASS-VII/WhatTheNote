@@ -134,8 +134,13 @@ async def upload_document(
 
     ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
 
-    prompt = f"""Based on this document content, with your own words and understanding of the content, generate a JSON object with a title 'title' (exactly and only up to 5 concise, descriptive words),
-              subject 'subject' (2–3 precise words), and summary 'summary' (30-40 words MAX). Content: {text[:2000]}. Return ONLY valid JSON without additional formatting"""
+    prompt = f"""Using your own understanding, generate a JSON object from the following content with:
+                - "title": a short and concised title (max 5 words),
+                - "subject": up to 3 words,
+                - "summary": max 40 words.
+
+                Content: {text[:2000]}
+                Return **only** valid JSON, no extra text."""
 
 
     try:
@@ -161,11 +166,6 @@ async def upload_document(
         raise HTTPException(
             status_code=500, detail=f"Document processing failed: {str(e)}"
         )
-
-    title_words = ai_data["title"].split()[:4]
-    ai_data["title"] = (
-        " ".join(title_words) if len(title_words) >= 1 else "Untitled Document"
-    )
 
     document = DocumentWithDetails(
         id=await get_next_document_id(),

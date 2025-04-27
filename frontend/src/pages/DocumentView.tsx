@@ -43,7 +43,7 @@ const DocumentView = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const randomQuestions = useMemo(() => getRandomItems(sampleQuestions, 3), []);
+  const [randomQuestions, setRandomQuestions] = useState(() => getRandomItems(sampleQuestions, 3));
   
   // Fetch document data from API
   React.useEffect(() => {
@@ -301,20 +301,38 @@ const DocumentView = () => {
                           <p className="text-sm text-muted-foreground">
                             Ask your first question about this document.
                           </p>
-                          <div className="mt-4 flex flex-wrap justify-center gap-2">
-                            {randomQuestions.map((q, index) => (
-                              <Button 
-                                key={index} 
-                                variant="outline" 
-                                className="text-left h-auto"
-                                onClick={() => setQuestion(q)}
-                              >
-                                {q}
-                              </Button>
-                            ))}
-                          </div>
                         </div>
                       )}
+                    <hr className="my-4 border-t border-muted" />
+                    <h3 className="text-center font-semibold mb-1">Suggested Questions</h3>
+                    <div className="mt-4 flex flex-wrap justify-center gap-2">
+                        {randomQuestions.map((q, index) => (
+                          <Button 
+                            key={index} 
+                            variant="outline" 
+                            className="text-left h-auto"
+                            onClick={() => setQuestion(q)}
+                          >
+                            {q}
+                          </Button>
+                        ))}
+                      </div>
+                    <div className="mt-4 flex flex-wrap justify-center gap-2">
+                      <Button  
+                        variant="outline" 
+                        className="text-left h-auto"
+                        onClick={() => setRandomQuestions(getRandomItems(sampleQuestions, 3))}
+                      >
+                        {"Reload"}
+                      </Button>
+                      <Button  
+                        variant="outline" 
+                        className="text-left h-auto"
+                        onClick={() => setQuestion('')}
+                      >
+                        {"Clear"}
+                      </Button>
+                    </div>
                     </div>
                   </CardContent>
                 </Card>

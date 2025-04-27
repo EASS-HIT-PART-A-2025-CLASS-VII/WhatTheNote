@@ -283,19 +283,17 @@ const DocumentView = () => {
                     
                     <div className="space-y-6">
                       {queries.length > 0 ? (
-                        queries.map((query, index) => (
-                          <div key={index} className="border rounded-lg p-4 animate-scale-in">
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="font-bold">{"Question: " + (query as { question: string }).question}</div>
-                              <div className="text-xs text-muted-foreground">
-                                {new Date((query as { timestamp: Date }).timestamp).toLocaleTimeString()} {new Date((query as { timestamp: Date }).timestamp).toLocaleDateString('en-GB')}
-                              </div>
-                            </div>
-                            <div>
-                              <Markdown>{query.answer}</Markdown>
+                        <>
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="font-bold">{"Question: " + queries[0].question}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {new Date(queries[0].timestamp).toLocaleTimeString()}
                             </div>
                           </div>
-                        ))
+                          <div className="prose prose-sm max-w-none">
+                            <Markdown>{queries[0].answer}</Markdown>
+                          </div>
+                        </>
                       ) : (
                         <div className="text-center py-10">
                           <MessageSquare className="h-10 w-10 mx-auto mb-4 text-muted-foreground/50" />
@@ -303,17 +301,17 @@ const DocumentView = () => {
                           <p className="text-sm text-muted-foreground">
                             Ask your first question about this document.
                           </p>
-                          <div className="mt-4 flex justify-center gap-2">
-                          {randomQuestions.map((q, index) => (
-                            <Button 
-                              key={index} 
-                              variant="outline" 
-                              className="text-left h-auto"
-                              onClick={() => setQuestion(q)}
-                            >
-                              {q}
-                            </Button>
-                          ))}
+                          <div className="mt-4 flex flex-wrap justify-center gap-2">
+                            {randomQuestions.map((q, index) => (
+                              <Button 
+                                key={index} 
+                                variant="outline" 
+                                className="text-left h-auto"
+                                onClick={() => setQuestion(q)}
+                              >
+                                {q}
+                              </Button>
+                            ))}
                           </div>
                         </div>
                       )}

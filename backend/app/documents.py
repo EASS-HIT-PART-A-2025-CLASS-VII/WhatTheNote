@@ -137,7 +137,7 @@ async def upload_document(
     prompt = f"""
     Analyze the following content:
     -- START OF CONTENT --
-    {text}
+    \n{text}\n
     -- END OF CONTENT --
     Return a concise JSON object with the following structure:
     - "title": a brief, meaningful title that's relevant to the whole content (max 5 words)

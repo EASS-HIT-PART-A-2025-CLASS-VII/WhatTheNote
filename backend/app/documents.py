@@ -141,7 +141,7 @@ async def upload_document(
     -- END OF CONTENT --
     Return a concise JSON object with the following structure:
     - "title": a brief, meaningful title that's relevant to the whole content (max 5 words)
-    - "subject": most relevant keyword
+    - "subject": most relevant keyword, max 2 words
     - "summary": a short summary (max 40 words)
     Respond with **only** valid JSON. No explanations, markdown, or extra text.
     """

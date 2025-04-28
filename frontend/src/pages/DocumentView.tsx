@@ -7,13 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Card, CardContent } from '../components/ui/card';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import { ChevronLeft, Search, DownloadCloud, Send, Sparkles, Copy, BookOpen, MessageSquare, History, FileQuestion } from 'lucide-react';
+import { ChevronLeft, Search, DownloadCloud, Send, Sparkles, Copy, BookOpen, Layers, MessageSquare, History, FileQuestion } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import { getRandomItems } from '../lib/utils';
 import Markdown from 'markdown-to-jsx';
-import ReactMarkdown from 'react-markdown';
-import rehypeReact from 'rehype-react';
+import Dashboard from './Dashboard';
 
 const sampleQuestions = [
   "What are the key points of this document?",
@@ -33,6 +32,7 @@ const DocumentView = () => {
   title: '',
   content: '',
   summary: '',
+  subject: '',
   queries: [],
   uploadedDate: new Date(),
   lastViewed: new Date()
@@ -61,6 +61,7 @@ const DocumentView = () => {
           ...data,
           content: data.content || '',
           summary: data.summary || '',
+          subject: data.subject || '',
           queries: data.queries || [],
           uploadedDate: new Date(data.uploadedDate || Date.now()),
           lastViewed: new Date(data.lastViewed || Date.now())
@@ -135,33 +136,17 @@ const DocumentView = () => {
   }
 
   if (!document.id) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-1 pt-24 pb-16">
-          <div className="container px-6 mx-auto text-center">
-            <FileQuestion className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Document Not Found</h2>
-            <p className="text-muted-foreground mb-4">The requested document could not be loaded.</p>
-            <Button asChild>
-              <Link to="/dashboard">Back to Dashboard</Link>
-            </Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
+    return
   }
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-        
         <main className="flex-1 pt-24 pb-16">
           <div className="container px-6 mx-auto">
             <div className="mb-8">
               <Button variant="ghost" className="mb-4" asChild>
-                <Link to="/dashboard">
+                <Link to="/dashboard?subject=all">
                   <ChevronLeft className="mr-2 h-4 w-4" />
                   Back to Dashboard
                 </Link>
@@ -175,6 +160,23 @@ const DocumentView = () => {
                 <span>Uploaded: {document.uploadedDate.toLocaleDateString('en-GB')}</span>
                 <span className="mx-2">•</span>
                 <span>Document ID: {document.id}</span>
+                <span className="mx-2">•</span>
+                <span>
+                <div className="mt flex items-center justify-between">
+                  {document.subject && (
+                    <Button
+                      variant="ghost" 
+                      className="flex items-center text-xs font-medium text-muted-foreground bg-muted rounded-full hover:bg-muted/80"
+                      onClick={() => {
+                        navigate('/dashboard?subject=' + document.subject);
+                      }}
+                    >
+                      <Layers className="h-3 w-3 mr-1" />
+                      {document.subject}
+                    </Button>
+                  )}
+                </div>
+                </span>
               </div>
             </div>
             

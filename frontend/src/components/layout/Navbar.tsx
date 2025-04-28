@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import AnimatedLogo from '../../components/ui/AnimatedLogo';
 import { Menu, X, User } from 'lucide-react';
@@ -10,7 +10,8 @@ import { useAuth } from '../../lib/AuthContext';
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-    const location = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   useEffect(() => {
@@ -77,11 +78,12 @@ const Navbar: React.FC = () => {
             {user ? (
               <>
                 <Link 
-                  to="/dashboard" 
+                  to="/dashboard?subject=all" 
                   className={cn(
                     "text-sm font-medium transition-colors hover:text-primary",
                     isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
                   )}
+                  onClick={() => window.location.href = '/dashboard?subject=all'}
                 >
                   Dashboard
                 </Link>
@@ -142,7 +144,7 @@ const Navbar: React.FC = () => {
           {user ? (
             <>
               <Link 
-                to="/dashboard" 
+                to="/dashboard?subject=all" 
                 className={cn(
                   "block py-2 text-base font-medium transition-colors hover:text-primary",
                   isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
@@ -165,7 +167,7 @@ const Navbar: React.FC = () => {
                 <Button variant="outline" className="w-full mb-2">Login</Button>
               </Link>
               <Button className="w-full" asChild>
-                <Link to="/dashboard">Get Started</Link>
+                <Link to="/dashboard?subject=all">Get Started</Link>
               </Button>
             </>
           )}

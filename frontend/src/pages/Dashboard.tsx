@@ -7,10 +7,12 @@ import SearchFilters from '../components/dashboard/SearchFilters';
 import DocumentTabs from '../components/dashboard/DocumentTabs';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
+import DocumentView from './DocumentView';
 import { toast } from 'sonner';
+import { useRef } from 'react';
 
 const Dashboard = () => {
-  const [subjectOptions, setSubjectOptions] = useState<string[]>(['All Subjects']);
+  const [subjectOptions, setSubjectOptions] = useState<string[]>(['all']);
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,16 +20,17 @@ const Dashboard = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedSubject, setSelectedSubject] = useState('All Subjects');
+  const [selectedSubject, setSelectedSubject] = useState('all');
   const [subjectGroups, setSubjectGroups] = useState<Record<string, Document[]>>({});
   const [expandedSubjects, setExpandedSubjects] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasInitializedSubject = useRef(false);
 
   useEffect(() => {
     const fetchDocuments = async () => {
     try {
-      const response = await fetch('http://localhost:8000/documents', {
+      const response = await fetch('http://localhost:8000/dashboard', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -82,30 +85,43 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const subjectFromUrl = urlParams.get('subject') || 'all';
+  
+    // Initialize selectedSubject from URL only once
+    if (!hasInitializedSubject.current && documents.length > 0) {
+      const uniqueSubjects = ['all', ...new Set(documents.map(d => d.subject))].filter(Boolean);
+  
+      if (uniqueSubjects.includes(subjectFromUrl)) {
+        setSelectedSubject(subjectFromUrl);
+      } else {
+        setSelectedSubject('all');
+      }
+  
+      hasInitializedSubject.current = true;
+      setSubjectOptions(uniqueSubjects as string[]);
+    }
+  }, [documents]);
+  
+  useEffect(() => {
+    if (!hasInitializedSubject.current) return; // Skip until initialized
+  
     let filtered = [...documents];
-    
+  
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter(doc => 
+      filtered = filtered.filter(doc =>
         doc.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+  
     // Subject filter
-    if (selectedSubject !== 'All Subjects') {
+    if (selectedSubject !== 'all') {
       filtered = filtered.filter(doc => doc.subject === selectedSubject);
     }
-    
+  
     setFilteredDocuments(filtered);
-    
-    // Update available subjects
-    const uniqueSubjects = ['All Subjects', ...new Set(filtered.map(d => d.subject))].filter(Boolean);
-    setSubjectOptions(uniqueSubjects as string[]);
-
-    if (!uniqueSubjects.includes(selectedSubject)) {
-      setSelectedSubject('All Subjects');
-    }
-
+  
     // Group by subject
     const groups = filtered.reduce((acc, doc) => {
       const subject = doc.subject || 'Uncategorized';
@@ -113,8 +129,11 @@ const Dashboard = () => {
       acc[subject].push(doc);
       return acc;
     }, {} as Record<string, Document[]>);
-    
+  
     setSubjectGroups(groups);
+  
+    // Update URL
+    navigate(`/dashboard?subject=${selectedSubject}`);
   }, [searchQuery, documents, selectedSubject]);
 
   const handleFileSelect = async (file: File) => {

@@ -78,12 +78,12 @@ const Navbar: React.FC = () => {
             {user ? (
               <>
                 <Link 
-                  to="/dashboard?subject=all" 
+                  to="/dashboard?subject=All%20Subjects" 
                   className={cn(
                     "text-sm font-medium transition-colors hover:text-primary",
                     isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
                   )}
-                  onClick={() => window.location.href = '/dashboard?subject=all'}
+                  onClick={() => window.location.href = '/dashboard?subject=All%20Subjects'}
                 >
                   Dashboard
                 </Link>
@@ -144,7 +144,7 @@ const Navbar: React.FC = () => {
           {user ? (
             <>
               <Link 
-                to="/dashboard?subject=all" 
+                to="/dashboard?subject=All%20Subjects" 
                 className={cn(
                   "block py-2 text-base font-medium transition-colors hover:text-primary",
                   isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
@@ -167,7 +167,7 @@ const Navbar: React.FC = () => {
                 <Button variant="outline" className="w-full mb-2">Login</Button>
               </Link>
               <Button className="w-full" asChild>
-                <Link to="/dashboard?subject=all">Get Started</Link>
+                <Link to="/dashboard?subject=All%20Subjects">Get Started</Link>
               </Button>
             </>
           )}

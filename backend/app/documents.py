@@ -32,7 +32,7 @@ async def get_documents(current_user: User = Depends(get_current_user)):
 
 
 @router.get("/dashboard")
-async def get_documents_dashboard(subject: str = "all", current_user: User = Depends(get_current_user)):
+async def get_documents_dashboard(subject: str = "All Subjects", current_user: User = Depends(get_current_user)):
     documents = await get_user_documents(current_user.id, subject)
     return documents
 

@@ -146,7 +146,7 @@ const DocumentView = () => {
           <div className="container px-6 mx-auto">
             <div className="mb-8">
               <Button variant="ghost" className="mb-4" asChild>
-                <Link to="/dashboard?subject=all">
+                <Link to="/dashboard?subject=All%20Subjects">
                   <ChevronLeft className="mr-2 h-4 w-4" />
                   Back to Dashboard
                 </Link>

@@ -26,7 +26,7 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard" className="text-muted-foreground text-sm hover:text-primary transition-colors">
+                <Link to="/dashboard?subject=All%20Subjects" className="text-muted-foreground text-sm hover:text-primary transition-colors">
                   Dashboard
                 </Link>
               </li>

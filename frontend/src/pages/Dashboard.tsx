@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { useRef } from 'react';
 
 const Dashboard = () => {
-  const [subjectOptions, setSubjectOptions] = useState<string[]>(['all']);
+  const [subjectOptions, setSubjectOptions] = useState<string[]>(['All Subjects']);
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,7 +20,7 @@ const Dashboard = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedSubject, setSelectedSubject] = useState('all');
+  const [selectedSubject, setSelectedSubject] = useState('All Subjects');
   const [subjectGroups, setSubjectGroups] = useState<Record<string, Document[]>>({});
   const [expandedSubjects, setExpandedSubjects] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -86,16 +86,16 @@ const Dashboard = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const subjectFromUrl = urlParams.get('subject') || 'all';
+    const subjectFromUrl = urlParams.get('subject') || 'All Subjects';
   
     // Initialize selectedSubject from URL only once
     if (!hasInitializedSubject.current && documents.length > 0) {
-      const uniqueSubjects = ['all', ...new Set(documents.map(d => d.subject))].filter(Boolean);
+      const uniqueSubjects = ['All Subjects', ...new Set(documents.map(d => d.subject))].filter(Boolean);
   
       if (uniqueSubjects.includes(subjectFromUrl)) {
         setSelectedSubject(subjectFromUrl);
       } else {
-        setSelectedSubject('all');
+        setSelectedSubject('All Subjects');
       }
   
       hasInitializedSubject.current = true;
@@ -116,7 +116,7 @@ const Dashboard = () => {
     }
   
     // Subject filter
-    if (selectedSubject !== 'all') {
+    if (selectedSubject !== 'All Subjects') {
       filtered = filtered.filter(doc => doc.subject === selectedSubject);
     }
   

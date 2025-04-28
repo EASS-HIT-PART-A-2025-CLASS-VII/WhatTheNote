@@ -83,7 +83,6 @@ const Navbar: React.FC = () => {
                     "text-sm font-medium transition-colors hover:text-primary",
                     isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
                   )}
-                  onClick={() => window.location.href = '/dashboard?subject=All%20Subjects'}
                 >
                   Dashboard
                 </Link>

@@ -162,11 +162,11 @@ const DocumentView = () => {
                 <span>Document ID: {document.id}</span>
                 <span className="mx-2">•</span>
                 <span>
-                <div className="mt flex items-center justify-between">
+                <div className="flex items-center text-xs font-medium text-muted-foreground bg-muted rounded-full">
                   {document.subject && (
                     <Button
-                      variant="ghost" 
-                      className="flex items-center text-xs font-medium text-muted-foreground bg-muted rounded-full hover:bg-muted/80"
+                      variant="ghost"
+                      className="flex items-center text-xs font-medium text-muted-foreground bg-muted rounded-full hover:bg-muted/80 h-7 min-h-0 py-0 px-3"
                       onClick={() => {
                         navigate('/dashboard?subject=' + document.subject);
                       }}

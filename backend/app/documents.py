@@ -31,6 +31,12 @@ async def get_documents(current_user: User = Depends(get_current_user)):
     return documents
 
 
+@router.get("/dashboard")
+async def get_documents_dashboard(subject: str = "all", current_user: User = Depends(get_current_user)):
+    documents = await get_user_documents(current_user.id, subject)
+    return documents
+
+
 @router.get("/documents/{document_id}")
 async def get_single_document(
     document_id: int, current_user: User = Depends(get_current_user)
@@ -142,7 +148,7 @@ async def upload_document(
     Return a concise JSON object with the following structure:
     - "title": a brief, meaningful title that's relevant to the whole content (max 5 words)
     - "subject": most relevant keyword, max 2 words
-    - "summary": a short summary (max 40 words)
+    - "summary": a short summary of what this content is about (max 40 words)
     Respond with **only** valid JSON. No explanations, markdown, or extra text.
     """
 

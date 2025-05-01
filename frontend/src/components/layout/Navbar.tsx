@@ -64,28 +64,29 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/" 
+            <Button
+              variant="ghost"
               className={cn(
                 "text-sm font-medium transition-colors hover:text-primary",
                 isActive('/') ? "text-primary" : "text-muted-foreground"
               )}
+              onClick={() => window.location.href = '/'}
             >
               Home
-            </Link>
-            
+            </Button>
             
             {user ? (
               <>
-                <Link 
-                  to="/dashboard?subject=All%20Subjects" 
+                <Button
+                  variant="ghost"
                   className={cn(
                     "text-sm font-medium transition-colors hover:text-primary",
                     isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
                   )}
+                  onClick={() => window.location.href = '/dashboard?subject=All%20Subjects'}
                 >
                   Dashboard
-                </Link>
+                </Button>
                 <Link 
                   to="/user" 
                   className="flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary"
@@ -130,34 +131,37 @@ const Navbar: React.FC = () => {
         )}
       >
         <div className="px-6 py-6 space-y-4">
-          <Link 
-            to="/" 
-            className={cn(
-              "block py-2 text-base font-medium transition-colors hover:text-primary",
-              isActive('/') ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            Home
-          </Link>
+        <Button
+          variant="ghost"
+          className={cn(
+            "block py-2 text-base font-medium transition-colors hover:text-primary",
+            isActive('/') ? "text-primary" : "text-muted-foreground"
+          )}
+          onClick={() => window.location.href = '/'}
+        >
+          Home
+        </Button>
           
           {user ? (
             <>
-              <Link 
-                to="/dashboard?subject=All%20Subjects" 
+              <Button
+                variant="ghost"
                 className={cn(
                   "block py-2 text-base font-medium transition-colors hover:text-primary",
                   isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
                 )}
+                onClick={() => window.location.href = '/dashboard?subject=All%20Subjects'}
               >
                 Dashboard
-              </Link>
-              <Link 
-                to="/user" 
+              </Button>
+              <Button
+                variant="ghost"
                 className="flex items-center space-x-2 py-2 text-base font-medium transition-colors hover:text-primary"
+                onClick={() => navigate('/user')}
               >
                 <User className="h-4 w-4" />
                 <span>{user.name}</span>
-              </Link>
+              </Button>
               <Button className="w-full" onClick={() => { logout(); window.location.href = '/'; }}>Sign Out</Button>
             </>
           ) : (

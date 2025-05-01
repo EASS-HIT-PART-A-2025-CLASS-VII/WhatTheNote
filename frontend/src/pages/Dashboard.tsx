@@ -121,20 +121,11 @@ const Dashboard = () => {
     }
   
     setFilteredDocuments(filtered);
-  
-    // Group by subject
-    const groups = filtered.reduce((acc, doc) => {
-      const subject = doc.subject || 'Uncategorized';
-      if (!acc[subject]) acc[subject] = [];
-      acc[subject].push(doc);
-      return acc;
-    }, {} as Record<string, Document[]>);
-  
-    setSubjectGroups(groups);
-  
-    // Update URL
-    navigate(`/dashboard?subject=${selectedSubject}`);
   }, [searchQuery, documents, selectedSubject]);
+
+  useEffect(() => {
+    navigate(`/dashboard?subject=${selectedSubject}`);
+  }, [selectedSubject]);
 
   const handleFileSelect = async (file: File) => {
     setIsUploading(true);

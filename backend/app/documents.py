@@ -21,6 +21,7 @@ from app.db import (
     update_document_last_viewed,
 )
 from app.prompts import QUERY_PROMPT, UPLOAD_PROMPT
+from app.utils import get_ollama_url
 
 router = APIRouter()
 
@@ -71,7 +72,7 @@ async def query_document(
 
     prompt = QUERY_PROMPT.format(content=doc['content'], question=query.question)
 
-    ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
+    ollama_url = get_ollama_url()
 
     try:
         async with httpx.AsyncClient(timeout=300) as client:
@@ -137,7 +138,7 @@ async def upload_document(
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid PDF file")
 
-    ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
+    ollama_url = get_ollama_url()
 
     prompt = UPLOAD_PROMPT.format(text=text)
 

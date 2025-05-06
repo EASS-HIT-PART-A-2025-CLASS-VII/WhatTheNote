@@ -7,8 +7,6 @@ import SearchFilters from '../components/dashboard/SearchFilters';
 import DocumentTabs from '../components/dashboard/DocumentTabs';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
-import DocumentView from './DocumentView';
-import { toast } from 'sonner';
 import { useRef } from 'react';
 
 const Dashboard = () => {
@@ -86,9 +84,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const subjectFromUrl = urlParams.get('subject') || 'All Subjects';
+    const subjectFromUrl = decodeURIComponent(urlParams.get('subject') || 'All Subjects');
   
-    // Initialize selectedSubject from URL only once
     if (!hasInitializedSubject.current && documents.length > 0) {
       const uniqueSubjects = ['All Subjects', ...new Set(documents.map(d => d.subject))].filter(Boolean);
   
@@ -101,6 +98,7 @@ const Dashboard = () => {
       hasInitializedSubject.current = true;
       setSubjectOptions(uniqueSubjects as string[]);
     }
+  
   }, [documents]);
   
   useEffect(() => {
@@ -122,10 +120,6 @@ const Dashboard = () => {
   
     setFilteredDocuments(filtered);
   }, [searchQuery, documents, selectedSubject]);
-
-  useEffect(() => {
-    navigate(`/dashboard?subject=${selectedSubject}`);
-  }, [selectedSubject]);
 
   const handleFileSelect = async (file: File) => {
     setIsUploading(true);

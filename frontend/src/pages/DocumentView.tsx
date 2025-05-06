@@ -168,7 +168,7 @@ const DocumentView = () => {
                       variant="ghost"
                       className="flex items-center text-xs font-medium text-muted-foreground bg-muted rounded-full hover:bg-muted/80 h-7 min-h-0 py-0 px-3"
                       onClick={() => {
-                        navigate('/dashboard?subject=' + document.subject);
+                        navigate(`/dashboard?subject=${encodeURIComponent(document.subject)}`);
                       }}
                     >
                       <Layers className="h-3 w-3 mr-1" />

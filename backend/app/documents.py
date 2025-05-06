@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, Body, UploadFile, File, s
 from typing import List
 from datetime import datetime
 import os
-import requests
 import json
 import httpx
 import fitz
@@ -21,6 +20,7 @@ from app.db import (
     delete_document,
     update_document_last_viewed,
 )
+from app.prompts import QUERY_PROMPT, UPLOAD_PROMPT
 
 router = APIRouter()
 
@@ -69,10 +69,7 @@ async def query_document(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    prompt = f"""Based on the following document content, answer the user's question. 
-                Document Content: {doc['content']} User Question: {query.question}
-                Respond with the answer only, make it concised.
-                """
+    prompt = QUERY_PROMPT.format(content=doc['content'], question=query.question)
 
     ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
 
@@ -129,8 +126,10 @@ async def query_document(
 async def upload_document(
     file: UploadFile = File(...), current_user: User = Depends(get_current_user)
 ):
-    contents = file.file.read()
-
+    if not file.content_type == "application/pdf" or not file.filename.endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Invalid file type. PDF only.")
+    
+    contents = await file.read()
     text = ""
     try:
         with fitz.open(stream=contents) as doc:  # No filetype param
@@ -140,30 +139,21 @@ async def upload_document(
 
     ollama_url = os.getenv("OLLAMA_BASE_URL") + "/api/generate"
 
-    prompt = f"""
-    Analyze the following content:
-    -- START OF CONTENT --
-    \n{text}\n
-    -- END OF CONTENT --
-    Return a concise JSON object with the following structure:
-    - "title": a brief, meaningful title that's relevant to the whole content (max 5 words)
-    - "subject": most relevant keyword, max 2 words
-    - "summary": a short summary of what this content is about (max 40 words)
-    Respond with **only** valid JSON. No explanations, markdown, or extra text.
-    """
+    prompt = UPLOAD_PROMPT.format(text=text)
 
     try:
-        response = requests.post(
-            ollama_url,
-            json={
-                "model": "gemma3:1b",
-                "prompt": prompt,
-                "format": "json",
-                "stream": False,
-            },
-        )
-        response.raise_for_status()
-        response_data = response.json()
+        async with httpx.AsyncClient(timeout=300) as client:
+            response = await client.post(
+                ollama_url,
+                json={
+                    "model": "gemma3:1b",
+                    "prompt": prompt,
+                    "format": "json",
+                    "stream": False,
+                },
+            )
+            response.raise_for_status()
+            response_data = response.json()
         if "response" not in response_data:
             raise ValueError("Missing 'response' field in Ollama output")
 

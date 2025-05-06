@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Body, UploadFile, File, status
 from typing import List
 from datetime import datetime
-import os
 import json
 import httpx
 import fitz
@@ -133,7 +132,7 @@ async def upload_document(
     contents = await file.read()
     text = ""
     try:
-        with fitz.open(stream=contents) as doc:  # No filetype param
+        with fitz.open(stream=contents) as doc:
             text = "\n".join(page.get_text() for page in doc)
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid PDF file")

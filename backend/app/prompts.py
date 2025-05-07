@@ -13,6 +13,15 @@ Analyze the following content:
 Return a concise JSON object with the following structure:
 - "title": a brief, meaningful title that's relevant to the whole content (max 5 words)
 - "subject": most relevant keyword, max 2 words
-- "summary": a short summary of what this content is about (max 40 words)
+- "summary": summarize the key points of this document (max 40 words)
 Respond with **only** valid JSON. No explanations, markdown, or extra text.
+"""
+
+TEXT_CLEANUP_PROMPT = """
+Clean up this PDF text: 
+-- START OF TEXT --
+\n{raw_text}\n
+-- END OF TEXT --
+Remove extra dots, fix line breaks, use Markdown and preserve paragraph meaning.
+Respond with **only** cleaned up text. No explanations or extra text.
 """

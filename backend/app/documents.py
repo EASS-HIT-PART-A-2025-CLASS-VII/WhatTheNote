@@ -20,7 +20,7 @@ from app.db import (
     update_document_last_viewed,
 )
 from app.prompts import QUERY_PROMPT, UPLOAD_PROMPT
-from app.utils import get_ollama_url
+from app.utils import get_ollama_url, clean_text_with_llm
 
 router = APIRouter()
 
@@ -137,9 +137,10 @@ async def upload_document(
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid PDF file")
 
-    ollama_url = get_ollama_url()
+    cleaned_text = await clean_text_with_llm(text)
 
-    prompt = UPLOAD_PROMPT.format(text=text)
+    ollama_url = get_ollama_url()
+    prompt = UPLOAD_PROMPT.format(text=cleaned_text)
 
     try:
         async with httpx.AsyncClient(timeout=300) as client:
@@ -170,7 +171,7 @@ async def upload_document(
         id=await get_next_document_id(),
         title=ai_data["title"],
         subject=ai_data.get("subject", "General"),
-        content=text,
+        content=cleaned_text,
         summary=ai_data["summary"],
         uploadedDate=datetime.now(),
         lastViewed=None,

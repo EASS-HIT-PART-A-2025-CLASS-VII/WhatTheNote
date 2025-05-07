@@ -18,10 +18,10 @@ Respond with **only** valid JSON. No explanations, markdown, or extra text.
 """
 
 TEXT_CLEANUP_PROMPT = """
-Clean up this PDF text: 
+For this PDF text: 
 -- START OF TEXT --
 \n{raw_text}\n
 -- END OF TEXT --
-Remove extra dots, fix line breaks, use Markdown and preserve paragraph meaning.
-Respond with **only** cleaned up text. No explanations or extra text.
+Remove extra dots, fix line breaks, use Markdown if needed and preserve paragraph meaning.
+Respond with **only** the refined text. No explanations or extra text.
 """

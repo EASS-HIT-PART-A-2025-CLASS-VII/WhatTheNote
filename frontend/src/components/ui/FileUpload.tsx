@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Progress } from '../../components/ui/progress';
 import { Upload, File, Check, AlertCircle } from 'lucide-react';
@@ -24,6 +25,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const [progress, setProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [documentId, setDocumentId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -105,7 +107,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                  },
+        },
         body: formData
       });
 
@@ -117,6 +119,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
       const result = await response.json();
       setIsUploading(false);
       setProgress(100);
+      if (result && result.id) {
+        setDocumentId(result.id);
+      } else {
+        console.warn('Document ID not found in upload response:', result);
+      }
       toast.success(`${file.name} uploaded successfully!`);
       return result;
     } catch (error) {
@@ -132,6 +139,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     setProgress(0);
     setIsUploading(false);
     setUploadError(null);
+    setDocumentId(null); // Clear document ID on reset
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -215,9 +223,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   Uploading...
                 </Button>
               ) : progress === 100 ? (
-                <Button variant="outline" size="sm" onClick={resetUpload}>
-                  <Check className="mr-1 h-4 w-4" /> Done
-                </Button>
+                <div className="flex space-x-2">
+                  <Button variant="outline" size="sm" onClick={resetUpload}>
+                    <Check className="mr-1 h-4 w-4" /> Done
+                  </Button>
+                </div>
               ) : (
                 <Button variant="outline" size="sm" onClick={resetUpload}>
                   Cancel
@@ -238,6 +248,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
             <p className="text-xs text-right text-muted-foreground">
               {progress}% {isUploading ? 'Uploading...' : progress === 100 ? 'Complete' : ''}
             </p>
+          </div>
+
+          <div>
+            {documentId && (
+              <Link to={`/document/${documentId}`}>
+                <Button variant="default" size="sm">
+                  Go To Document Page
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       )}

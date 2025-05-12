@@ -77,16 +77,15 @@ const Navbar: React.FC = () => {
             
             {user ? (
               <>
-                <Button
-                  variant="ghost"
+                <Link
+                  to="/dashboard?subject=All%20Subjects"
                   className={cn(
                     "text-sm font-medium transition-colors hover:text-primary",
                     isActive('/dashboard') ? "text-primary" : "text-muted-foreground"
                   )}
-                  onClick={() => window.location.href = '/dashboard?subject=All%20Subjects'}
                 >
                   Dashboard
-                </Button>
+                </Link>
                 <Link 
                   to="/user" 
                   className="flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary"

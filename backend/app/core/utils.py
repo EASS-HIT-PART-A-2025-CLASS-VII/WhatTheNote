@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 from fastapi import HTTPException
 import os
-from app.prompts import TEXT_CLEANUP_PROMPT
+from app.core.prompts import TEXT_CLEANUP_PROMPT
 import httpx
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.auth import *
-from app.db import *
-from app.documents import router as documents_router
-from app.users import router as users_router
+from app.services.auth import *
+from app.services.db import *
+from app.routers.documents import router as documents_router
+from app.routers.users import router as users_router
 
 app = FastAPI()
 
@@ -20,13 +20,16 @@ app.add_middleware(
 app.include_router(documents_router)
 app.include_router(users_router)
 
+
 @app.get("/")
 async def read_root():
     return {"message": "Hello, World!"}
 
+
 @app.get("/favicon.ico")
 def favicon():
     return {}
+
 
 @app.get("/features")
 async def get_features():

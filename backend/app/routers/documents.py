@@ -8,9 +8,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from app.schemas import QueryRequest, DocumentWithDetails
-from app.auth import get_current_user, User
-from app.db import (
+from app.schemas.query_schemas import QueryRequest
+from app.schemas.document_schemas import DocumentWithDetails
+from app.schemas.user_schemas import User
+from app.services.auth import get_current_user
+from app.services.db import (
     get_user_documents,
     get_document,
     add_query_to_document,
@@ -19,8 +21,10 @@ from app.db import (
     delete_document,
     update_document_last_viewed,
 )
-from app.prompts import QUERY_PROMPT, UPLOAD_PROMPT
-from app.utils import get_ollama_url, clean_text_with_llm
+from app.core.prompts import QUERY_PROMPT, UPLOAD_PROMPT
+from app.core.utils import get_ollama_url, clean_text_with_llm
+from app.services.auth import get_current_user
+from app.services.db import get_database
 
 router = APIRouter()
 
@@ -32,7 +36,9 @@ async def get_documents(current_user: User = Depends(get_current_user)):
 
 
 @router.get("/dashboard")
-async def get_documents_dashboard(subject: str = "All Subjects", current_user: User = Depends(get_current_user)):
+async def get_documents_dashboard(
+    subject: str = "All Subjects", current_user: User = Depends(get_current_user)
+):
     documents = await get_user_documents(current_user.id, subject)
     return documents
 
@@ -69,7 +75,7 @@ async def query_document(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    prompt = QUERY_PROMPT.format(content=doc['content'], question=query.question)
+    prompt = QUERY_PROMPT.format(content=doc["content"], question=query.question)
 
     ollama_url = get_ollama_url()
 
@@ -77,11 +83,7 @@ async def query_document(
         async with httpx.AsyncClient(timeout=300) as client:
             response = await client.post(
                 ollama_url,
-                json={
-                    "model": "gemma3:1b",
-                    "prompt": prompt,
-                    "stream": False
-                }
+                json={"model": "gemma3:1b", "prompt": prompt, "stream": False},
             )
             response.raise_for_status()
             llm_response = response.json()
@@ -92,9 +94,7 @@ async def query_document(
             "answer": llm_response.get("response").strip(),
             "timestamp": datetime.utcnow(),
         }
-        result = await add_query_to_document(
-            current_user.id, document_id, query_data
-        )
+        result = await add_query_to_document(current_user.id, document_id, query_data)
         if not result.modified_count:
             raise HTTPException(
                 status_code=500, detail="Failed to save query to database"
@@ -113,13 +113,17 @@ async def query_document(
         raise HTTPException(status_code=504, detail="Ollama request timeout")
     except httpx.HTTPStatusError as e:
         logger.error(f"Ollama API error: {str(e)} Response: {e.response.text}")
-        raise HTTPException(status_code=502, detail=f"Ollama API error: {e.response.status_code}")
+        raise HTTPException(
+            status_code=502, detail=f"Ollama API error: {e.response.status_code}"
+        )
     except (KeyError, json.JSONDecodeError) as e:
         logger.error(f"Response parsing error: {str(e)}")
         raise HTTPException(status_code=502, detail="Invalid Ollama response format")
     except Exception as e:
         logger.exception("Unexpected error during query processing")
-        raise HTTPException(status_code=500, detail=f"Query processing failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Query processing failed: {str(e)}"
+        )
 
 
 @router.post("/documents/upload")
@@ -128,7 +132,7 @@ async def upload_document(
 ):
     if not file.content_type == "application/pdf" or not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Invalid file type. PDF only.")
-    
+
     contents = await file.read()
     text = ""
     try:

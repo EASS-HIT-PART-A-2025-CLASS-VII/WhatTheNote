@@ -58,6 +58,7 @@ async def get_user_documents(user_id: str, subject: str):
     user = await users.find_one({"id": user_id})
     return user.get("documents", []) if user else []
 
+
 async def update_document(user_id: str, document_id: int, update_data: dict):
     users = await get_users_collection()
     return await users.update_one(

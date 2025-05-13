@@ -3,17 +3,17 @@ from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta, datetime, timezone
 import uuid
-from typing import Optional
 import os
 
-from .schemas import User, UserUpdate, Token
-from .auth import (
+from app.schemas.user_schemas import User, UserUpdate
+from app.schemas.token_schema import Token
+from app.core.utils import get_password_hash
+from app.services.auth import (
     get_current_user,
     authenticate_user,
-    get_password_hash,
     create_access_token,
 )
-from .db import (
+from app.services.db import (
     get_database,
     get_user_by_email,
     create_user,

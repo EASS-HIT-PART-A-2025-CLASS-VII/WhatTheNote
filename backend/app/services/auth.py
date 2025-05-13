@@ -1,16 +1,17 @@
 from datetime import datetime, timedelta
-from typing import Optional, List
+from typing import Optional
 import os
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.concurrency import run_in_threadpool
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from passlib.context import CryptContext
-from pydantic import BaseModel, Field
 from dotenv import load_dotenv
-from app.db import get_user_by_email, create_user, update_user, delete_user
-from app.schemas import *
-from app.utils import verify_password, get_password_hash
+from app.services.db import get_user_by_email
+from app.schemas.user_schemas import *
+from app.schemas.document_schemas import *
+from app.schemas.token_schema import *
+from app.schemas.query_schemas import *
+from app.core.utils import verify_password
+
 
 load_dotenv()
 

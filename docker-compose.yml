@@ -9,7 +9,6 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - mongo
       - ollama
 
   frontend:
@@ -19,14 +18,6 @@ services:
       - "3000:80"
     depends_on:
       - backend
-
-  mongo:
-    image: mongo:6
-    container_name: whatthenote-mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
 
   ollama:
     build:
@@ -38,8 +29,5 @@ services:
     volumes:
       - ollama_data:/root/.ollama
 
-
-
 volumes:
-  mongo_data:
   ollama_data:

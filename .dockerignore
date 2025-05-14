@@ -1,0 +1,44 @@
+# Node dependencies
+node_modules/
+frontend/node_modules/
+
+# Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+venv/
+backend/venv/
+
+# Build output
+build/
+dist/
+frontend/dist/
+frontend/build/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# IDE/editor files
+.vscode/
+.idea/
+.vite/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment and secrets
+.env
+.env.*
+backend/.env*
+
+# Misc
+*.todo
+.git
+.gitignore
+.dockerignore

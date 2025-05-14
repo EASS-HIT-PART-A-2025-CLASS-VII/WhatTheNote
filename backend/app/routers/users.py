@@ -1,7 +1,8 @@
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
-from datetime import timedelta, datetime, timezone
+from datetime import timedelta, datetime
+from zoneinfo import ZoneInfo
 import uuid
 import os
 

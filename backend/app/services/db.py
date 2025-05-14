@@ -71,7 +71,7 @@ async def update_document_last_viewed(user_id: str, document_id: int):
     users = await get_users_collection()
     return await users.update_one(
         {"id": user_id, "documents.id": document_id},
-        {"$set": {"documents.$.lastViewed": datetime.now()}},
+        {"$set": {"documents.$.lastViewed": datetime.now(ZoneInfo("Asia/Jerusalem"))}},
     )
 
 
@@ -113,7 +113,7 @@ async def get_document(user_id: str, document_id: int):
             "summary": doc.get("summary", ""),
             "queries": doc.get("queries", []),
             "uploadedDate": doc["uploadedDate"].isoformat(),
-            "lastViewed": datetime.now(),
+            "lastViewed": datetime.now(ZoneInfo("Asia/Jerusalem")),
         }
     except InvalidId:
         raise HTTPException(status_code=400, detail="Invalid document ID")

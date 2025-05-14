@@ -106,7 +106,7 @@ async def register_user(user_data: dict = Body(...)):
         "email": email,
         "hashed_password": hashed_password,
         "documents": [],
-        "createdAt": datetime.now(timezone.utc),
+        "createdAt": datetime.now(ZoneInfo("Asia/Jerusalem")),
     }
 
     await create_user(user_data)

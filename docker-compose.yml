@@ -5,7 +5,7 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_BASE_URL=http://ollama:11434 # overriding localhost ollama
     ports:
       - "8000:8000"
     depends_on:

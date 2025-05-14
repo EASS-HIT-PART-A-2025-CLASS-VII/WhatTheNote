@@ -10,7 +10,7 @@ class User(BaseModel):
     name: str
     email: str
     createdAt: datetime = Field(default_factory=lambda: datetime.now(ZoneInfo("Asia/Jerusalem")))
-    formatted_created_at: str = Field(default_factory=lambda: datetime.now(ZoneInfo("Asia/Jerusalem")))
+    formatted_created_at: str = Field(default_factory=lambda: datetime.now(ZoneInfo("Asia/Jerusalem")).isoformat())
 
 
 class UserUpdate(BaseModel):

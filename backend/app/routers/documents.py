@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Body, UploadFile, File, status
 from typing import List
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import json
 import httpx
 import fitz
@@ -24,7 +25,6 @@ from app.services.db import (
 from app.core.prompts import QUERY_PROMPT, UPLOAD_PROMPT
 from app.core.utils import get_ollama_url, clean_text_with_llm
 from app.services.auth import get_current_user
-from app.services.db import get_database
 
 router = APIRouter()
 
@@ -92,7 +92,7 @@ async def query_document(
         query_data = {
             "question": query.question,
             "answer": llm_response.get("response").strip(),
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(ZoneInfo("Asia/Jerusalem")),
         }
         result = await add_query_to_document(current_user.id, document_id, query_data)
         if not result.modified_count:
@@ -100,11 +100,8 @@ async def query_document(
                 status_code=500, detail="Failed to save query to database"
             )
 
-        return {
-            "question": query.question,
-            "answer": llm_response.get("response").strip(),
-            "timestamp": datetime.utcnow(),
-        }
+        return query_data
+    
     except httpx.ConnectError as e:
         logger.error(f"Ollama connection error: {str(e)}")
         raise HTTPException(status_code=503, detail="Ollama service unavailable")
@@ -113,17 +110,13 @@ async def query_document(
         raise HTTPException(status_code=504, detail="Ollama request timeout")
     except httpx.HTTPStatusError as e:
         logger.error(f"Ollama API error: {str(e)} Response: {e.response.text}")
-        raise HTTPException(
-            status_code=502, detail=f"Ollama API error: {e.response.status_code}"
-        )
+        raise HTTPException(status_code=502, detail=f"Ollama API error: {e.response.status_code}")
     except (KeyError, json.JSONDecodeError) as e:
         logger.error(f"Response parsing error: {str(e)}")
         raise HTTPException(status_code=502, detail="Invalid Ollama response format")
     except Exception as e:
         logger.exception("Unexpected error during query processing")
-        raise HTTPException(
-            status_code=500, detail=f"Query processing failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Query processing failed: {str(e)}")
 
 
 @router.post("/documents/upload")
@@ -177,7 +170,7 @@ async def upload_document(
         subject=ai_data.get("subject", "General"),
         content=cleaned_text,
         summary=ai_data["summary"],
-        uploadedDate=datetime.now(),
+        uploadedDate=datetime.now(ZoneInfo("Asia/Jerusalem")),
         lastViewed=None,
     )
 

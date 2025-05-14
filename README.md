@@ -14,9 +14,7 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 ### Backend
 - **FastAPI** - Python REST API framework
 - **MongoDB** - NoSQL database for document storage
-- **PyPDF2** - PDF text extraction library
 - **Ollama** - Local LLM for AI processing
-- **Motor** - Async MongoDB driver
 - **Pydantic** - Data validation and settings management
 - **bcrypt** - Password hashing
 
@@ -30,28 +28,11 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 
 ## Features
 
-### Core Functionality
-- Secure JWT authentication flow
-- PDF upload with text extraction
-- AI-generated document summaries
-- Natural language document querying
-- Document organization by subject
-- User profile management
-
-### Technical Highlights
-- Async backend operations
-- PDF content validation
-- Responsive dashboard UI
-- Error handling with toasts
-- Type-safe API contracts
-- CORS-enabled API security
-
 ## Getting Started
 
 ### Prerequisites
 - Python 3.13+
-- Node.js 18+
-- MongoDB instance
+- Node.js 20+
 - Ollama server running locally
 
 ### Setup

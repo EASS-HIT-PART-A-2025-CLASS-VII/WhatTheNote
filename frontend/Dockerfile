@@ -1,4 +1,3 @@
-# Use Node.js for building the frontend
 FROM node:20-alpine AS build
 
 WORKDIR /app

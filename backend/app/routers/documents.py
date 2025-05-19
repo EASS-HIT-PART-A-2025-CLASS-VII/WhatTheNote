@@ -101,7 +101,7 @@ async def query_document(
             )
 
         return query_data
-    
+
     except httpx.ConnectError as e:
         logger.error(f"Ollama connection error: {str(e)}")
         raise HTTPException(status_code=503, detail="Ollama service unavailable")
@@ -110,13 +110,17 @@ async def query_document(
         raise HTTPException(status_code=504, detail="Ollama request timeout")
     except httpx.HTTPStatusError as e:
         logger.error(f"Ollama API error: {str(e)} Response: {e.response.text}")
-        raise HTTPException(status_code=502, detail=f"Ollama API error: {e.response.status_code}")
+        raise HTTPException(
+            status_code=502, detail=f"Ollama API error: {e.response.status_code}"
+        )
     except (KeyError, json.JSONDecodeError) as e:
         logger.error(f"Response parsing error: {str(e)}")
         raise HTTPException(status_code=502, detail="Invalid Ollama response format")
     except Exception as e:
         logger.exception("Unexpected error during query processing")
-        raise HTTPException(status_code=500, detail=f"Query processing failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Query processing failed: {str(e)}"
+        )
 
 
 @router.post("/documents/upload")

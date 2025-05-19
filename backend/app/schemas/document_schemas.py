@@ -10,7 +10,9 @@ class DocumentWithDetails(BaseModel):
     subject: str
     content: str
     summary: str
-    uploadedDate: datetime = Field(default_factory=lambda: datetime.now(ZoneInfo("Asia/Jerusalem")))
+    uploadedDate: datetime = Field(
+        default_factory=lambda: datetime.now(ZoneInfo("Asia/Jerusalem"))
+    )
     lastViewed: Optional[datetime] = None
 
     class Config:

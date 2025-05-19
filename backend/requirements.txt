@@ -11,3 +11,8 @@ httpx
 bcrypt
 numpy
 PyMuPDF
+pytest
+pytest-asyncio
+asyncio
+httpx
+pytest-mock

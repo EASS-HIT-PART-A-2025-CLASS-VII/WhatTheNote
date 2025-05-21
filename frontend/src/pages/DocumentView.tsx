@@ -46,6 +46,7 @@ const DocumentView = () => {
   const [error, setError] = useState('');
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [randomQuestions, setRandomQuestions] = useState(() => getRandomItems(sampleQuestions, 3));
+  const [latestQuery, setLatestQuery] = useState<any | null>(null);
 
   const MarkdownViewer = ({ content }: { content: string }) => (
     <div className="prose prose-sm dark:prose-invert max-w-none">
@@ -109,7 +110,12 @@ const DocumentView = () => {
       return response.json();
     })
     .then(data => {
-      setQueries(prevQueries => [data as typeof prevQueries[0], ...prevQueries]);
+      setQueries(prevQueries => {
+        const updated = [data, ...prevQueries];
+        setLatestQuery(data); // immediately set latest
+        return updated;
+      });
+      
       setQuestion('');
     })
     .catch(err => setError(err.message))
@@ -292,25 +298,23 @@ const DocumentView = () => {
                     </div>
                     
                     <div className="space-y-6">
-                      {queries.length > 0 ? (
+                      {latestQuery ? (
                         <>
                           <div className="flex items-start justify-between mb-2">
-                            <div className="font-bold">{"Question: " + queries[0].question}</div>
+                            <div className="font-bold">{"Question: " + latestQuery.question}</div>
                             <div className="text-xs text-muted-foreground">
-                              {new Date(queries[0].timestamp).toLocaleTimeString()}
+                              {new Date(latestQuery.timestamp).toLocaleTimeString()}
                             </div>
                           </div>
                           <div className="prose prose-sm dark:prose-invert max-w-none">
-                          <MarkdownViewer content={queries[0].answer}/>
+                          <hr className="my-4 border-t border-muted" />
+                          <MarkdownViewer content={latestQuery.answer}/>
                           </div>
                         </>
                       ) : (
                         <div className="text-center py-10">
                           <MessageSquare className="h-10 w-10 mx-auto mb-4 text-muted-foreground/50" />
-                          <h3 className="font-semibold mb-1">No questions yet</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Ask your first question about this document.
-                          </p>
+                          <h3 className="font-semibold mb-1">Your question will appear here, ask away!</h3>
                         </div>
                       )}
                     <hr className="my-4 border-t border-muted" />

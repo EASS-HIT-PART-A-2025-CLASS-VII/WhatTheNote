@@ -12,6 +12,7 @@ User Question:
 - If the answer is not explicitly stated in the content, respond: "Not found in the document."
 - Be brief and direct.
 - Use Markdown formatting if needed for emphasis and clarity.
+- Response with **only** the answer.
 """
 
 UPLOAD_PROMPT = """

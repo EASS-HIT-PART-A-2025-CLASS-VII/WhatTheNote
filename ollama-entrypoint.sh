@@ -11,7 +11,7 @@ until curl --fail http://ollama:11434/api/tags; do
 done
 
 # Pull the ollama model
-ollama pull gemma3:1b
+ollama pull gemma2:2b
 
 # Wait for background Ollama process (keep container running)
 wait

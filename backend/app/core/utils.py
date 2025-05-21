@@ -22,7 +22,7 @@ def get_ollama_url(endpoint: str = "/api/generate") -> str:
     return base_url.rstrip("/") + endpoint
 
 
-async def clean_text_with_llm(raw_text: str, model: str = "gemma3:1b") -> str:
+async def clean_text_with_llm(raw_text: str, model: str = "gemma2:2b") -> str:
     prompt = TEXT_CLEANUP_PROMPT.format(raw_text=raw_text)
 
     ollama_url = get_ollama_url()
@@ -37,12 +37,7 @@ async def clean_text_with_llm(raw_text: str, model: str = "gemma3:1b") -> str:
         if "response" not in response_data:
             raise ValueError("Missing 'response' field in Ollama output")
 
-        cleaned_text = (
-            response_data["response"]
-            .replace("```", "")  # Remove code fences if present
-            .strip()
-        )
-        return cleaned_text
+        return response_data["response"]
 
     except Exception as e:
         raise RuntimeError(f"LLM cleanup failed: {str(e)}")

@@ -11,6 +11,7 @@ httpx
 bcrypt
 numpy
 PyMuPDF
+pdfplumber
 pytest
 pytest-asyncio
 asyncio

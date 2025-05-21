@@ -4,8 +4,9 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import json
 import httpx
-import fitz
 import logging
+import pdfplumber
+from io import BytesIO
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +84,7 @@ async def query_document(
         async with httpx.AsyncClient(timeout=300) as client:
             response = await client.post(
                 ollama_url,
-                json={"model": "gemma3:1b", "prompt": prompt, "stream": False},
+                json={"model": "gemma2:2b", "prompt": prompt, "stream": False},
             )
             response.raise_for_status()
             llm_response = response.json()
@@ -132,11 +133,9 @@ async def upload_document(
 
     contents = await file.read()
     text = ""
-    try:
-        with fitz.open(stream=contents) as doc:
-            text = "\n".join(page.get_text() for page in doc)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Invalid PDF file")
+    with pdfplumber.open(BytesIO(contents)) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text()
 
     cleaned_text = await clean_text_with_llm(text)
 
@@ -148,7 +147,7 @@ async def upload_document(
             response = await client.post(
                 ollama_url,
                 json={
-                    "model": "gemma3:1b",
+                    "model": "gemma2:2b",
                     "prompt": prompt,
                     "format": "json",
                     "stream": False,
@@ -159,10 +158,7 @@ async def upload_document(
         if "response" not in response_data:
             raise ValueError("Missing 'response' field in Ollama output")
 
-        cleaned_response = (
-            response_data["response"].replace("```json", "").replace("```", "").strip()
-        )
-        ai_data = json.loads(cleaned_response)
+        ai_data = json.loads(response_data["response"])
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Document processing failed: {str(e)}"

@@ -1,8 +1,17 @@
 QUERY_PROMPT = """
-Based on the following document content, answer the user's question.
-Document Content: {content}
-User Question: {question}
-Respond with the answer only, make it concise.
+You must answer the user's question **exclusively** using the content below.
+
+Document Content:
+{content}
+
+User Question:
+{question}
+
+- Do not use prior knowledge.
+- Do not make assumptions or inferences.
+- If the answer is not explicitly stated in the content, respond: "Not found in the document."
+- Be brief and direct.
+- Use Markdown formatting if needed for emphasis and clarity.
 """
 
 UPLOAD_PROMPT = """
@@ -18,10 +27,12 @@ Respond with **only** valid JSON. No explanations, markdown, or extra text.
 """
 
 TEXT_CLEANUP_PROMPT = """
-For this PDF text: 
+Given the following PDF text:
 -- START OF TEXT --
 \n{raw_text}\n
 -- END OF TEXT --
-Remove extra dots, fix line breaks, use Markdown if needed and preserve paragraph meaning.
-Respond with **only** the refined text. No explanations or extra text.
+
+Rewrite and organize this text using Markdown formatting while preserving paragraph meaning.
+
+Respond with **only** the refined text — no explanations or additional content.
 """

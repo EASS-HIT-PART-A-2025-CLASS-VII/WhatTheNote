@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
@@ -12,7 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import { getRandomItems } from '../lib/utils';
 import Markdown from 'markdown-to-jsx';
-import Dashboard from './Dashboard';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const sampleQuestions = [
   "What are the key points of this document?",
@@ -37,6 +37,8 @@ const DocumentView = () => {
   uploadedDate: new Date(),
   lastViewed: new Date()
 });
+  // console.log("Document content:", document.content);
+  const cleanContent = document.content.replace(/^```[\w]*\n?/, '').replace(/```$/, '');
   const [question, setQuestion] = useState('');
   const [isQuerying, setIsQuerying] = useState(false);
   const [queries, setQueries] = useState<any[]>([]);
@@ -44,6 +46,14 @@ const DocumentView = () => {
   const [error, setError] = useState('');
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [randomQuestions, setRandomQuestions] = useState(() => getRandomItems(sampleQuestions, 3));
+
+  const MarkdownViewer = ({ content }: { content: string }) => (
+    <div className="prose prose-sm dark:prose-invert max-w-none">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
   
   // Fetch document data from API
   React.useEffect(() => {
@@ -219,7 +229,7 @@ const DocumentView = () => {
                         <Copy className="h-4 w-4" />
                       </Button>
                     </div>
-                    <p className="text-muted-foreground whitespace-pre-line">
+                    <p className="prose prose-sm dark:prose-invert max-w-none">
                       {document.summary}
                     </p>
                   </CardContent>
@@ -234,7 +244,7 @@ const DocumentView = () => {
                         <div className="rounded-full bg-primary/10 p-2 mr-3">
                           <BookOpen className="h-4 w-4 text-primary" />
                         </div>
-                        <h3 className="font-semibold">Document Content</h3>
+                        <h3 className="font-semibold">AI-Formatted Document Content</h3>
                       </div>
                       <Button 
                         variant="ghost" 
@@ -245,9 +255,7 @@ const DocumentView = () => {
                         <Copy className="h-4 w-4" />
                       </Button>
                     </div>
-                    <p className="text-muted-foreground whitespace-pre-line">
-                      {document.content}
-                    </p>
+                    <MarkdownViewer content={cleanContent} />
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -292,8 +300,8 @@ const DocumentView = () => {
                               {new Date(queries[0].timestamp).toLocaleTimeString()}
                             </div>
                           </div>
-                          <div className="prose prose-sm max-w-none">
-                            <Markdown>{queries[0].answer}</Markdown>
+                          <div className="prose prose-sm dark:prose-invert max-w-none">
+                          <MarkdownViewer content={queries[0].answer}/>
                           </div>
                         </>
                       ) : (
@@ -364,8 +372,8 @@ const DocumentView = () => {
                             </Button>
                           </div>
                           {expandedIndex === index && (
-                            <div className="text-muted-foreground text-sm mt-2 bg-muted/5 p-3 rounded-lg transition-all duration-300">
-                              <Markdown>{query.answer}</Markdown>
+                            <div className="prose prose-sm dark:prose-invert max-w-none">
+                              <MarkdownViewer content={query.answer} />
                             </div>
                           )}
                         </div>

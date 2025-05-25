@@ -7,9 +7,7 @@ Document Content:
 User Question:
 {question}
 
-- Do not use prior knowledge.
-- Do not make assumptions or inferences.
-- If the answer is not explicitly stated in the content, respond: "Not found in the document."
+- If the answer is not explicitly stated in the content, respond only with: "Not found in the document."
 - Be brief and direct.
 - Use Markdown formatting if needed for emphasis and clarity.
 - Response with **only** the answer.

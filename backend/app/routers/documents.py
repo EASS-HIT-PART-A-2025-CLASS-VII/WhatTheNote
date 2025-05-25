@@ -4,11 +4,9 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import json
 import httpx
-import logging
 import pdfplumber
 from io import BytesIO
-
-logger = logging.getLogger(__name__)
+import re
 
 from app.schemas.query_schemas import QueryRequest
 from app.schemas.document_schemas import DocumentWithDetails
@@ -24,7 +22,7 @@ from app.services.db import (
     update_document_last_viewed,
 )
 from app.core.prompts import QUERY_PROMPT, UPLOAD_PROMPT
-from app.core.utils import get_ollama_url, clean_text_with_llm
+from app.core.utils import get_ollama_url, clean_text_with_llm, call_llm
 from app.services.auth import get_current_user
 
 router = APIRouter()
@@ -77,51 +75,24 @@ async def query_document(
         raise HTTPException(status_code=404, detail="Document not found")
 
     prompt = QUERY_PROMPT.format(content=doc["content"], question=query.question)
+    llm_response = await call_llm(prompt)
+    
+    raw_answer = llm_response.get("response", "").strip()
+    cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()
 
-    ollama_url = get_ollama_url()
+    query_data = {
+        "question": query.question,
+        "answer": cleaned_answer,
+        "timestamp": datetime.now(ZoneInfo("Asia/Jerusalem")),
+    }
 
-    try:
-        async with httpx.AsyncClient(timeout=300) as client:
-            response = await client.post(
-                ollama_url,
-                json={"model": "gemma2:2b", "prompt": prompt, "stream": False},
-            )
-            response.raise_for_status()
-            llm_response = response.json()
-            logger.info(f"Ollama response: {llm_response}")
-
-        query_data = {
-            "question": query.question,
-            "answer": llm_response.get("response").strip(),
-            "timestamp": datetime.now(ZoneInfo("Asia/Jerusalem")),
-        }
-        result = await add_query_to_document(current_user.id, document_id, query_data)
-        if not result.modified_count:
-            raise HTTPException(
-                status_code=500, detail="Failed to save query to database"
-            )
-
-        return query_data
-
-    except httpx.ConnectError as e:
-        logger.error(f"Ollama connection error: {str(e)}")
-        raise HTTPException(status_code=503, detail="Ollama service unavailable")
-    except httpx.TimeoutException as e:
-        logger.error(f"Ollama timeout: {str(e)}")
-        raise HTTPException(status_code=504, detail="Ollama request timeout")
-    except httpx.HTTPStatusError as e:
-        logger.error(f"Ollama API error: {str(e)} Response: {e.response.text}")
+    result = await add_query_to_document(current_user.id, document_id, query_data)
+    if not result.modified_count:
         raise HTTPException(
-            status_code=502, detail=f"Ollama API error: {e.response.status_code}"
+            status_code=500, detail="Failed to save query to database"
         )
-    except (KeyError, json.JSONDecodeError) as e:
-        logger.error(f"Response parsing error: {str(e)}")
-        raise HTTPException(status_code=502, detail="Invalid Ollama response format")
-    except Exception as e:
-        logger.exception("Unexpected error during query processing")
-        raise HTTPException(
-            status_code=500, detail=f"Query processing failed: {str(e)}"
-        )
+
+    return query_data
 
 
 @router.post("/documents/upload")
@@ -138,31 +109,16 @@ async def upload_document(
             text += page.extract_text()
 
     cleaned_text = await clean_text_with_llm(text)
-
-    ollama_url = get_ollama_url()
     prompt = UPLOAD_PROMPT.format(text=cleaned_text)
+    llm_response = await call_llm(prompt, format="json")
+
+    if "response" not in llm_response:
+        raise HTTPException(status_code=500, detail="Missing 'response' field in LLM output")
 
     try:
-        async with httpx.AsyncClient(timeout=300) as client:
-            response = await client.post(
-                ollama_url,
-                json={
-                    "model": "gemma2:2b",
-                    "prompt": prompt,
-                    "format": "json",
-                    "stream": False,
-                },
-            )
-            response.raise_for_status()
-            response_data = response.json()
-        if "response" not in response_data:
-            raise ValueError("Missing 'response' field in Ollama output")
-
-        ai_data = json.loads(response_data["response"])
+        ai_data = json.loads(llm_response["response"])
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Document processing failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Invalid JSON in LLM response: {str(e)}")
 
     document = DocumentWithDetails(
         id=await get_next_document_id(),
@@ -176,3 +132,4 @@ async def upload_document(
 
     await add_document_to_user(current_user.id, document.model_dump())
     return document
+

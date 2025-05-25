@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Body, UploadFile, File, status
+from fastapi import APIRouter, Depends, HTTPException, Body, UploadFile, File
 from typing import List
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -6,6 +6,7 @@ import json
 import httpx
 import pdfplumber
 from io import BytesIO
+import logging
 import re
 
 from app.schemas.query_schemas import QueryRequest
@@ -26,7 +27,7 @@ from app.core.utils import get_ollama_url, clean_text_with_llm, call_llm
 from app.services.auth import get_current_user
 
 router = APIRouter()
-
+logger = logging.getLogger(__name__)
 
 @router.get("/documents", response_model=List[DocumentWithDetails])
 async def get_documents(current_user: User = Depends(get_current_user)):
@@ -75,7 +76,12 @@ async def query_document(
         raise HTTPException(status_code=404, detail="Document not found")
 
     prompt = QUERY_PROMPT.format(content=doc["content"], question=query.question)
-    llm_response = await call_llm(prompt)
+    
+    try:
+        llm_response = await call_llm(prompt)
+    except HTTPException as e:
+        logger.error(f"LLM Response error: {e.detail}")
+        raise
     
     raw_answer = llm_response.get("response", "").strip()
     cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()
@@ -97,7 +103,8 @@ async def query_document(
 
 @router.post("/documents/upload")
 async def upload_document(
-    file: UploadFile = File(...), current_user: User = Depends(get_current_user)
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
 ):
     if not file.content_type == "application/pdf" or not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Invalid file type. PDF only.")
@@ -110,15 +117,14 @@ async def upload_document(
 
     cleaned_text = await clean_text_with_llm(text)
     prompt = UPLOAD_PROMPT.format(text=cleaned_text)
-    llm_response = await call_llm(prompt, format="json")
-
-    if "response" not in llm_response:
-        raise HTTPException(status_code=500, detail="Missing 'response' field in LLM output")
 
     try:
+        llm_response = await call_llm(prompt, format="json")
         ai_data = json.loads(llm_response["response"])
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Invalid JSON in LLM response: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Document processing failed: {str(e)}"
+        )
 
     document = DocumentWithDetails(
         id=await get_next_document_id(),
@@ -132,4 +138,3 @@ async def upload_document(
 
     await add_document_to_user(current_user.id, document.model_dump())
     return document
-

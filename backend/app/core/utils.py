@@ -24,7 +24,7 @@ def get_ollama_url(endpoint: str = "/api/generate") -> str:
     return base_url.rstrip("/") + endpoint
 
 
-async def call_llm(prompt: str, model: str = "qwen3:1.7b", format: str | None = None) -> dict:
+async def call_llm(prompt: str, model: str = "gemma2:2b", format: str | None = None) -> dict:
     ollama_url = get_ollama_url()
     payload = {
         "model": model,

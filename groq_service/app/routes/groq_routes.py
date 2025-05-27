@@ -8,6 +8,7 @@ import logging
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+
 @router.post("/call-groq")
 async def call_groq_endpoint(request: GroqRequest):
     groq_api_key = os.getenv("GROQ_API_KEY")
@@ -40,7 +41,7 @@ async def call_groq_endpoint(request: GroqRequest):
     except Exception as e:
         logger.exception("Unexpected error during Groq API call")
         raise HTTPException(status_code=500, detail=f"Groq call failed: {str(e)}")
-    
+
 
 @router.post("/clean-text")
 async def clean_text_endpoint(request: GroqRequest):

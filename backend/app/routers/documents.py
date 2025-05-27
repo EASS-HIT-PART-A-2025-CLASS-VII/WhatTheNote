@@ -18,7 +18,6 @@ from app.services.database.documents import *
 from app.services.database.user import *
 from app.llm.prompts import QUERY_PROMPT, UPLOAD_PROMPT
 from app.llm.groq import call_groq, clean_text_with_groq
-from app.services.auth import get_current_user
 
 router = APIRouter()
 logger = logging.getLogger(__name__)

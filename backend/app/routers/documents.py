@@ -1,33 +1,25 @@
-from fastapi import APIRouter, Depends, HTTPException, Body, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from typing import List
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import json
-import httpx
 import pdfplumber
 from io import BytesIO
 import logging
-import re
 
 from app.schemas.query_schemas import QueryRequest
 from app.schemas.document_schemas import DocumentWithDetails
 from app.schemas.user_schemas import User
 from app.services.auth import get_current_user
-from app.services.db import (
-    get_user_documents,
-    get_document,
-    add_query_to_document,
-    add_document_to_user,
-    get_next_document_id,
-    delete_document,
-    update_document_last_viewed,
-)
+from app.services.database.documents import *
+from app.services.database.user import *
 from app.core.prompts import QUERY_PROMPT, UPLOAD_PROMPT
-from app.core.utils import get_ollama_url, clean_text_with_llm, call_llm
+from app.llm.groq import call_groq, clean_text_with_groq
 from app.services.auth import get_current_user
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
 
 @router.get("/documents", response_model=List[DocumentWithDetails])
 async def get_documents(current_user: User = Depends(get_current_user)):
@@ -76,27 +68,24 @@ async def query_document(
         raise HTTPException(status_code=404, detail="Document not found")
 
     prompt = QUERY_PROMPT.format(content=doc["content"], question=query.question)
-    
+
     try:
-        llm_response = await call_llm(prompt)
+        llm_response = await call_groq(prompt)
     except HTTPException as e:
         logger.error(f"LLM Response error: {e.detail}")
         raise
-    
-    raw_answer = llm_response.get("response", "").strip()
-    cleaned_answer = re.sub(r"<think>.*?</think>", "", raw_answer, flags=re.DOTALL).strip()
+
+    raw_answer = llm_response["choices"][0]["message"]["content"]
 
     query_data = {
         "question": query.question,
-        "answer": cleaned_answer,
+        "answer": raw_answer,
         "timestamp": datetime.now(ZoneInfo("Asia/Jerusalem")),
     }
 
     result = await add_query_to_document(current_user.id, document_id, query_data)
     if not result.modified_count:
-        raise HTTPException(
-            status_code=500, detail="Failed to save query to database"
-        )
+        raise HTTPException(status_code=500, detail="Failed to save query to database")
 
     return query_data
 
@@ -115,12 +104,13 @@ async def upload_document(
         for page in pdf.pages:
             text += page.extract_text()
 
-    cleaned_text = await clean_text_with_llm(text)
+    cleaned_text = await clean_text_with_groq(text)
     prompt = UPLOAD_PROMPT.format(text=cleaned_text)
 
     try:
-        llm_response = await call_llm(prompt, format="json")
-        ai_data = json.loads(llm_response["response"])
+        llm_response = await call_groq(prompt)
+        ai_json = llm_response["choices"][0]["message"]["content"]
+        ai_data = json.loads(ai_json)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Document processing failed: {str(e)}"

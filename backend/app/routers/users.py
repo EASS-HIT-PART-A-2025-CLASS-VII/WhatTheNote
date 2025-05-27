@@ -14,14 +14,8 @@ from app.services.auth import (
     authenticate_user,
     create_access_token,
 )
-from app.services.db import (
-    get_database,
-    get_user_by_email,
-    create_user,
-    update_user,
-    delete_user,
-    get_users_collection,
-)
+from app.services.database.core import get_database
+from app.services.database.user import *
 
 load_dotenv()
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))

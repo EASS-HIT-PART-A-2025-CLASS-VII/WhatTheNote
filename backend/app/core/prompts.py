@@ -7,7 +7,9 @@ Document Content:
 User Question:
 {question}
 
-- If the answer is not explicitly stated in the content, respond only with: "Not found in the document."
+- Use prior knowledge.
+- If the question or part of it is not relevant to the content, respond with: "Not relevant to this file content." regarding this question.
+- Answer only the relevant questions for this file content.
 - Be brief and direct.
 - Use Markdown formatting if needed for emphasis and clarity.
 - Response with **only** the answer.

@@ -6,7 +6,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from dotenv import load_dotenv
-from app.services.db import get_user_by_email
+from app.services.database.user import get_user_by_email
 from app.schemas.user_schemas import *
 from app.schemas.document_schemas import *
 from app.schemas.token_schema import *

@@ -6,6 +6,8 @@ services:
       - ./backend/.env
     ports:
       - "8000:8000"
+    depends_on:
+      - groq
 
   frontend:
     build: ./frontend
@@ -14,3 +16,11 @@ services:
       - "3000:80"
     depends_on:
       - backend
+    
+  groq:
+    build: ./groq_service
+    container_name: whatthenote-groq
+    env_file:
+      - ./groq_service/.env
+    ports:
+      - "9000:9000"

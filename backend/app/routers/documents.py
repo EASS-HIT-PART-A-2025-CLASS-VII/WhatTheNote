@@ -7,13 +7,16 @@ import pdfplumber
 from io import BytesIO
 import logging
 
+logging.getLogger("pdfplumber").setLevel(logging.ERROR)
+logging.getLogger("pdfminer").setLevel(logging.ERROR)
+
 from app.schemas.query_schemas import QueryRequest
 from app.schemas.document_schemas import DocumentWithDetails
 from app.schemas.user_schemas import User
 from app.services.auth import get_current_user
 from app.services.database.documents import *
 from app.services.database.user import *
-from app.core.prompts import QUERY_PROMPT, UPLOAD_PROMPT
+from app.llm.prompts import QUERY_PROMPT, UPLOAD_PROMPT
 from app.llm.groq import call_groq, clean_text_with_groq
 from app.services.auth import get_current_user
 

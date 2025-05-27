@@ -1,51 +1,28 @@
-from fastapi import HTTPException
-import os
-from app.core.prompts import TEXT_CLEANUP_PROMPT
 import httpx
-import logging
+import os
+from dotenv import load_dotenv
 
-logger = logging.getLogger(__name__)
+load_dotenv()
+
+GROQ_SERVICE_URL = os.getenv("GROQ_SERVICE_URL")
+GROQ_MODEL = "llama3-70b-8192"
 
 
-async def call_groq(prompt: str, model: str = "llama3-70b-8192") -> dict:
-    groq_api_key = os.getenv("GROQ_API_KEY")
-    if not groq_api_key:
-        raise HTTPException(status_code=500, detail="GROQ_API_KEY not configured")
-
-    headers = {
-        "Authorization": f"Bearer {groq_api_key}",
-        "Content-Type": "application/json",
-    }
-
-    payload = {
-        "model": model,
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.7,
-    }
-
-    try:
-        async with httpx.AsyncClient(timeout=60) as client:
-            response = await client.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers=headers,
-                json=payload,
-            )
-            response.raise_for_status()
-            return response.json()
-    except httpx.HTTPStatusError as e:
-        logger.error(f"Groq API error: {str(e)} Response: {e.response.text}")
-        raise HTTPException(
-            status_code=502, detail=f"Groq API error: {e.response.status_code}"
+async def call_groq(prompt: str, model: str = GROQ_MODEL) -> dict:
+    async with httpx.AsyncClient(timeout=60) as client:
+        response = await client.post(
+            f"{GROQ_SERVICE_URL}/call-groq",
+            json={"prompt": prompt, "model": model},
         )
-    except Exception as e:
-        logger.exception("Unexpected error during Groq API call")
-        raise HTTPException(status_code=500, detail=f"Groq call failed: {str(e)}")
+        response.raise_for_status()
+        return response.json()
 
 
-async def clean_text_with_groq(raw_text: str, model: str = "llama3-70b-8192") -> str:
-    prompt = TEXT_CLEANUP_PROMPT.format(raw_text=raw_text)
-    response = await call_groq(prompt, model)
-    try:
-        return response["choices"][0]["message"]["content"]
-    except (KeyError, IndexError):
-        raise RuntimeError("Invalid response from Groq API")
+async def clean_text_with_groq(raw_text: str, model: str = GROQ_MODEL) -> str:
+    async with httpx.AsyncClient(timeout=60) as client:
+        response = await client.post(
+            f"{GROQ_SERVICE_URL}/clean-text",
+            json={"prompt": raw_text, "model": model},
+        )
+        response.raise_for_status()
+        return response.json()["content"]

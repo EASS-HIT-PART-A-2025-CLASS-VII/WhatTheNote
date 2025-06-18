@@ -24,41 +24,41 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 **Backend Directory Structure:**
 ```sh
 backend/
-│   ├── app
-│   │   ├── core
-│   │   │   └── utils.py
-│   │   ├── llm
-│   │   │   ├── groq.py
-│   │   │   └── prompts.py
-│   │   ├── main.py
-│   │   ├── routers
-│   │   │   ├── documents.py
-│   │   │   └── users.py
-│   │   ├── schemas
-│   │   │   ├── document_schemas.py
-│   │   │   ├── query_schemas.py
-│   │   │   ├── token_schema.py
-│   │   │   └── user_schemas.py
-│   │   ├── services
-│   │   │   ├── auth.py
-│   │   │   └── database
-│   │   │       ├── core.py
-│   │   │       ├── documents.py
-│   │   │       └── user.py
-│   │   └── tests
-│   │       ├── integration
-│   │       │   └── test_api_integration.py
-│   │       └── unit
-│   │           ├── routers
-│   │           │   ├── conftest.py
-│   │           │   ├── test_documents.py
-│   │           │   └── test_users.py
-│   │           └── services
-│   │               ├── conftest.py
-│   │               ├── test_auth.py
-│   │               └── test_db.py
-│   ├── Dockerfile
-│   └── requirements.txt
+├── app
+│   ├── core
+│   │   └── utils.py
+│   ├── llm
+│   │   ├── groq.py
+│   │   └── prompts.py
+│   ├── main.py
+│   ├── routers
+│   │   ├── documents.py
+│   │   └── users.py
+│   ├── schemas
+│   │   ├── document_schemas.py
+│   │   ├── query_schemas.py
+│   │   ├── token_schema.py
+│   │   └── user_schemas.py
+│   ├── services
+│   │   ├── auth.py
+│   │   └── database
+│   │       ├── core.py
+│   │       ├── documents.py
+│   │       └── user.py
+│   └── tests
+│       ├── integration
+│       │   └── test_api_integration.py
+│       └── unit
+│           ├── routers
+│           │   ├── conftest.py
+│           │   ├── test_documents.py
+│           │   └── test_users.py
+│           └── services
+│               ├── conftest.py
+│               ├── test_auth.py
+│               └── test_db.py
+├── Dockerfile
+└── requirements.txt
 ```
 
 ---
@@ -77,113 +77,113 @@ backend/
 **Frontend Directory Structure:**
 ```sh
 frontend/
-│   ├── config
-│   │   ├── eslint.config.js
-│   │   ├── tailwind.config.ts
-│   │   └── vite.config.ts
-│   ├── Dockerfile
-│   ├── index.html
-│   ├── json_config
-│   │   ├── components.json
-│   │   ├── tsconfig.app.json
-│   │   ├── tsconfig.json
-│   │   └── tsconfig.node.json
-│   ├── nginx
-│   │   └── nginx.conf
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── postcss.config.js
-│   └── src
-│       ├── App.css
-│       ├── App.tsx
-│       ├── components
-│       │   ├── dashboard
-│       │   │   ├── DashboardHeader.tsx
-│       │   │   ├── DocumentGrid.tsx
-│       │   │   ├── DocumentTabs.tsx
-│       │   │   ├── NoDocumentsFound.tsx
-│       │   │   ├── SearchFilters.tsx
-│       │   │   └── SubjectGrouping.tsx
-│       │   ├── layout
-│       │   │   ├── Footer.tsx
-│       │   │   └── Navbar.tsx
-│       │   └── ui
-│       │       ├── accordion.tsx
-│       │       ├── alert-dialog.tsx
-│       │       ├── alert.tsx
-│       │       ├── AnimatedLogo.tsx
-│       │       ├── aspect-ratio.tsx
-│       │       ├── avatar.tsx
-│       │       ├── badge.tsx
-│       │       ├── breadcrumb.tsx
-│       │       ├── button.tsx
-│       │       ├── calendar.tsx
-│       │       ├── card.tsx
-│       │       ├── carousel.tsx
-│       │       ├── chart.tsx
-│       │       ├── checkbox.tsx
-│       │       ├── collapsible.tsx
-│       │       ├── command.tsx
-│       │       ├── context-menu.tsx
-│       │       ├── dialog.tsx
-│       │       ├── DocumentCard.tsx
-│       │       ├── drawer.tsx
-│       │       ├── dropdown-menu.tsx
-│       │       ├── FeatureCard.tsx
-│       │       ├── FileUpload.tsx
-│       │       ├── form.tsx
-│       │       ├── hover-card.tsx
-│       │       ├── input-otp.tsx
-│       │       ├── input.tsx
-│       │       ├── label.tsx
-│       │       ├── menubar.tsx
-│       │       ├── navigation-menu.tsx
-│       │       ├── pagination.tsx
-│       │       ├── popover.tsx
-│       │       ├── progress.tsx
-│       │       ├── radio-group.tsx
-│       │       ├── resizable.tsx
-│       │       ├── scroll-area.tsx
-│       │       ├── select.tsx
-│       │       ├── separator.tsx
-│       │       ├── sheet.tsx
-│       │       ├── sidebar.tsx
-│       │       ├── skeleton.tsx
-│       │       ├── slider.tsx
-│       │       ├── sonner.tsx
-│       │       ├── switch.tsx
-│       │       ├── table.tsx
-│       │       ├── tabs.tsx
-│       │       ├── textarea.tsx
-│       │       ├── toast.tsx
-│       │       ├── toaster.tsx
-│       │       ├── toggle-group.tsx
-│       │       ├── toggle.tsx
-│       │       ├── tooltip.tsx
-│       │       └── use-toast.ts
-│       ├── hooks
-│       │   ├── use-mobile.tsx
-│       │   └── use-toast.ts
-│       ├── index.css
-│       ├── lib
-│       │   ├── api.ts
-│       │   ├── AuthContext.tsx
-│       │   └── utils.ts
-│       ├── main.tsx
-│       ├── pages
-│       │   ├── Dashboard.tsx
-│       │   ├── DocumentView.tsx
-│       │   ├── Index.tsx
-│       │   ├── Login.tsx
-│       │   ├── NotFound.tsx
-│       │   ├── SignUp.tsx
-│       │   ├── Upload.tsx
-│       │   └── UserProfile.tsx
-│       ├── types
-│       │   ├── document.ts
-│       │   └── user.ts
-│       └── vite-env.d.ts
-```
+├── config
+│   ├── eslint.config.js
+│   ├── tailwind.config.ts
+│   └── vite.config.ts
+├── Dockerfile
+├── index.html
+├── json_config
+│   ├── components.json
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   └── tsconfig.node.json
+├── nginx
+│   └── nginx.conf
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+└── src
+    ├── App.css
+    ├── App.tsx
+    ├── components
+    │   ├── dashboard
+    │   │   ├── DashboardHeader.tsx
+    │   │   ├── DocumentGrid.tsx
+    │   │   ├── DocumentTabs.tsx
+    │   │   ├── NoDocumentsFound.tsx
+    │   │   ├── SearchFilters.tsx
+    │   │   └── SubjectGrouping.tsx
+    │   ├── layout
+    │   │   ├── Footer.tsx
+    │   │   └── Navbar.tsx
+    │   └── ui
+    │       ├── accordion.tsx
+    │       ├── alert-dialog.tsx
+    │       ├── alert.tsx
+    │       ├── AnimatedLogo.tsx
+    │       ├── aspect-ratio.tsx
+    │       ├── avatar.tsx
+    │       ├── badge.tsx
+    │       ├── breadcrumb.tsx
+    │       ├── button.tsx
+    │       ├── calendar.tsx
+    │       ├── card.tsx
+    │       ├── carousel.tsx
+    │       ├── chart.tsx
+    │       ├── checkbox.tsx
+    │       ├── collapsible.tsx
+    │       ├── command.tsx
+    │       ├── context-menu.tsx
+    │       ├── dialog.tsx
+    │       ├── DocumentCard.tsx
+    │       ├── drawer.tsx
+    │       ├── dropdown-menu.tsx
+    │       ├── FeatureCard.tsx
+    │       ├── FileUpload.tsx
+    │       ├── form.tsx
+    │       ├── hover-card.tsx
+    │       ├── input-otp.tsx
+    │       ├── input.tsx
+    │       ├── label.tsx
+    │       ├── menubar.tsx
+    │       ├── navigation-menu.tsx
+    │       ├── pagination.tsx
+    │       ├── popover.tsx
+    │       ├── progress.tsx
+    │       ├── radio-group.tsx
+    │       ├── resizable.tsx
+    │       ├── scroll-area.tsx
+    │       ├── select.tsx
+    │       ├── separator.tsx
+    │       ├── sheet.tsx
+    │       ├── sidebar.tsx
+    │       ├── skeleton.tsx
+    │       ├── slider.tsx
+    │       ├── sonner.tsx
+    │       ├── switch.tsx
+    │       ├── table.tsx
+    │       ├── tabs.tsx
+    │       ├── textarea.tsx
+    │       ├── toast.tsx
+    │       ├── toaster.tsx
+    │       ├── toggle-group.tsx
+    │       ├── toggle.tsx
+    │       ├── tooltip.tsx
+    │       └── use-toast.ts
+    ├── hooks
+    │   ├── use-mobile.tsx
+    │   └── use-toast.ts
+    ├── index.css
+    ├── lib
+    │   ├── api.ts
+    │   ├── AuthContext.tsx
+    │   └── utils.ts
+    ├── main.tsx
+    ├── pages
+    │   ├── Dashboard.tsx
+    │   ├── DocumentView.tsx
+    │   ├── Index.tsx
+    │   ├── Login.tsx
+    │   ├── NotFound.tsx
+    │   ├── SignUp.tsx
+    │   ├── Upload.tsx
+    │   └── UserProfile.tsx
+    ├── types
+    │   ├── document.ts
+    │   └── user.ts
+    └── vite-env.d.ts
+
 
 ---
 

@@ -1,6 +1,5 @@
 # WhatTheNote
----
-A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages state-of-the-art LLMs for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration.
+A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages Groq LLM for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration.
 
 ## Features
 - 📄 **PDF Upload & Extraction**: Upload PDF files and extract their content.
@@ -11,12 +10,10 @@ A full-stack application that transforms PDF documents into interactive, AI-powe
 - 🔒 **Authentication**: Secure user login and document access.
 - 📊 **Dashboard**: Visualize and interact with your document collection.
 
----
 
 ## Video Demo
 
 
----
 
 ## Project Structure
 
@@ -30,7 +27,6 @@ WhatTheNote/
 
 ![Architecture](https://i.imgur.com/DFuQmcI.png)
 
----
 
 ## Running the Project with Docker
 
@@ -59,7 +55,6 @@ WhatTheNote/
     - Frontend
     - Groq Service
 
----
 
 ## Backend
 
@@ -110,7 +105,6 @@ backend/
 └── requirements.txt
 ```
 
----
 
 ## Frontend
 
@@ -234,7 +228,6 @@ frontend/
     └── vite-env.d.ts
 ```
 
----
 
 ## Groq Service
 **Groq Service Directory Structure:**
@@ -252,8 +245,6 @@ groq_service/
 └── requirements.txt
 ```
 
----
-
 ## Key Components
 
 - **[`backend/app/llm/groq.py`](backend/app/llm/groq.py)**: Handles async calls to the Groq LLM service for text cleanup and querying.
@@ -262,7 +253,6 @@ groq_service/
 - **[`frontend/src/pages/DocumentView.tsx`](frontend/src/pages/DocumentView.tsx)**: Main UI for viewing, querying, and interacting with documents.
 - **[`docker-compose.yml`](docker-compose.yml)**: Orchestrates backend, frontend, and Groq service containers.
 
----
 
 ## Additional Notes
 PDFs are processed securely; only authenticated users can access their documents.

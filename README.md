@@ -12,18 +12,17 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 
 ---
 
-## 🚀 Tech Stack
+## Tech Stack
 
 **Backend**
 - [FastAPI](https://fastapi.tiangolo.com/) (Python 3.13+)
 - [MongoDB](https://www.mongodb.com/) (Document storage)
-- [Ollama](https://ollama.com/) (Local LLM inference)
 - [Groq API](https://console.groq.com/) (Cloud LLM inference)
 - [Pydantic](https://docs.pydantic.dev/) (Validation)
 - [bcrypt](https://pypi.org/project/bcrypt/) (Password hashing)
 
 **Frontend**
-- [React](https://react.dev/) (18+)
+- [React](https://react.dev/) (20+)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [shadcn/ui](https://ui.shadcn.com/) (UI components)
@@ -38,7 +37,7 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 
 ---
 
-## ✨ Features
+## Features
 
 - 📄 **PDF Upload & Extraction**: Upload PDF files and extract their content.
 - 🧠 **AI Summarization**: Generate concise summaries and metadata using LLMs.
@@ -50,14 +49,19 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 
 ---
 
-## 🗂️ Project Structure
+## Project Architecture
+![Architecture](https://i.imgur.com/DFuQmcI.png)
+
+---
+
+## Project Structure
 
 WhatTheNote/ │ ├── backend/ │ ├── app/ │ │ ├── llm/ │ │ │ ├── groq.py │ │ │ └── prompts.py │ │ ├── main.py │ │ └── ... (other backend modules) │ ├── Dockerfile │ └── requirements.txt │ ├── frontend/ │ ├── src/ │ │ ├── pages/ │ │ │ └── DocumentView.tsx │ │ └── ... (components, utils, etc.) │ ├── public/ │ ├── Dockerfile │ ├── package.json │ └── index.html │ ├── groq_service/ │ ├── app/ │ │ ├── routes/ │ │ │ └── groq_routes.py │ │ ├── core/ │ │ │ └── prompts.py │ │ └── ... (schemas, main.py, etc.) │ ├── Dockerfile │ └── requirements.txt │ ├── docker-compose.yml ├── .env ├── README.md └── ...
 
 
 ---
 
-## 🧩 Key Components
+## Key Components
 
 - **[`backend/app/llm/groq.py`](backend/app/llm/groq.py)**: Handles async calls to the Groq LLM service for text cleanup and querying.
 - **[`backend/app/llm/prompts.py`](backend/app/llm/prompts.py)**: Contains prompt templates for summarization, querying, and cleanup.
@@ -67,7 +71,7 @@ WhatTheNote/ │ ├── backend/ │ ├── app/ │ │ ├── llm/ �
 
 ---
 
-## 🏃‍♂️ Running the Project with Docker
+## Running the Project with Docker
 
 1. **Clone the repository**
     ```sh
@@ -103,7 +107,7 @@ WhatTheNote/ │ ├── backend/ │ ├── app/ │ │ ├── llm/ �
 
 ---
 
-## 📝 Example Usage
+## Example Usage
 
 - **Upload a PDF**: Go to the dashboard, click "Upload", and select a PDF file.
 - **View Document**: Click on a document to see its AI-generated summary, cleaned content, and ask questions.
@@ -111,7 +115,7 @@ WhatTheNote/ │ ├── backend/ │ ├── app/ │ │ ├── llm/ �
 
 ---
 
-## 🛠️ Development
+## Development
 
 - **Frontend**:  
     ```sh
@@ -136,7 +140,7 @@ WhatTheNote/ │ ├── backend/ │ ├── app/ │ │ ├── llm/ �
 
 --- 
 
-📚 Additional Notes
+## Additional Notes
 PDFs are processed securely; only authenticated users can access their documents.
 LLM calls are routed via the Groq service for fast, scalable inference.
 Markdown rendering ensures readable, well-formatted document content.

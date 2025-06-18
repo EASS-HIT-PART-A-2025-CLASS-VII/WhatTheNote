@@ -1,14 +1,20 @@
 # WhatTheNote
 
+---
+
 ## About the Project
 WhatTheNote is a full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages state-of-the-art LLMs for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration.
 
+---
+
 ## Features
-- 📄 PDF text extraction and analysis
-- 🧠 AI-powered summarization and question answering
-- 🔍 Smart document querying with natural language
-- 📁 Secure document management with user authentication
-- 📈 Interactive dashboard for document insights
+- 📄 **PDF Upload & Extraction**: Upload PDF files and extract their content.
+- 🧠 **AI Summarization**: Generate concise summaries and metadata using LLMs.
+- 🔍 **Smart Querying**: Ask questions about your documents and get context-aware answers.
+- 🪄 **AI Content Cleanup**: Convert raw PDF text into clean, readable Markdown.
+- 📁 **Document Management**: Organize, view, and filter your documents.
+- 🔒 **Authentication**: Secure user login and document access.
+- 📊 **Dashboard**: Visualize and interact with your document collection.
 
 ---
 
@@ -43,7 +49,7 @@ WhatTheNote/
     - Sign up at [Groq Console](https://console.groq.com/).
 
 3. **Configure Environment Variables**
-    - Copy `.env.example` to `.env` (if provided) or create a `.env` file in the root.
+    - Create a `.env` file in the root.
     - Set Groq service URL and your Groq API key:
       ```
       GROQ_API_KEY=your_groq_api_key
@@ -62,9 +68,9 @@ WhatTheNote/
 
 ## Backend
 
-**Tech Stack:**
+**Backend Tech Stack:**
 - [FastAPI](https://fastapi.tiangolo.com/) (Python 3.13+)
-- [MongoDB](https://www.mongodb.com/) (Document storage)
+- [MongoDB](https://www.mongodb.com/) (Document storage, **hosted on an external server**)
 - [Groq API](https://console.groq.com/) (Cloud LLM inference)
 - [Pydantic](https://docs.pydantic.dev/) (Validation)
 - [bcrypt](https://pypi.org/project/bcrypt/) (Password hashing)
@@ -113,7 +119,7 @@ backend/
 
 ## Frontend
 
-**Tech Stack**
+**Frontend Tech Stack**
 - [React](https://react.dev/) (20+)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
@@ -253,18 +259,6 @@ groq_service/
 
 ---
 
-## Features
-
-- 📄 **PDF Upload & Extraction**: Upload PDF files and extract their content.
-- 🧠 **AI Summarization**: Generate concise summaries and metadata using LLMs.
-- 🔍 **Smart Querying**: Ask questions about your documents and get context-aware answers.
-- 🪄 **AI Content Cleanup**: Convert raw PDF text into clean, readable Markdown.
-- 📁 **Document Management**: Organize, view, and filter your documents.
-- 🔒 **Authentication**: Secure user login and document access.
-- 📊 **Dashboard**: Visualize and interact with your document collection.
-
----
-
 ## Key Components
 
 - **[`backend/app/llm/groq.py`](backend/app/llm/groq.py)**: Handles async calls to the Groq LLM service for text cleanup and querying.
@@ -272,14 +266,6 @@ groq_service/
 - **[`groq_service/app/routes/groq_routes.py`](groq_service/app/routes/groq_routes.py)**: FastAPI endpoints for Groq LLM operations.
 - **[`frontend/src/pages/DocumentView.tsx`](frontend/src/pages/DocumentView.tsx)**: Main UI for viewing, querying, and interacting with documents.
 - **[`docker-compose.yml`](docker-compose.yml)**: Orchestrates backend, frontend, and Groq service containers.
-
----
-
-## Example Usage
-
-- **Upload a PDF**: Go to the dashboard, click "Upload", and select a PDF file.
-- **View Document**: Click on a document to see its AI-generated summary, cleaned content, and ask questions.
-- **Ask Questions**: Use the "Q&A" tab to query the document with natural language.
 
 ---
 

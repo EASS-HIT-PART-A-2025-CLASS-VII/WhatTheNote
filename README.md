@@ -23,7 +23,7 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 
 **Backend Directory Structure:**
 ```sh
-├── backend/
+backend/
 │   ├── app
 │   │   ├── core
 │   │   │   └── utils.py
@@ -76,7 +76,7 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 
 **Frontend Directory Structure:**
 ```sh
-├── frontend/
+frontend/
 │   ├── config
 │   │   ├── eslint.config.js
 │   │   ├── tailwind.config.ts
@@ -190,17 +190,17 @@ WhatTheNote is a full-stack application that transforms PDF documents into inter
 ## Groq Service
 **Groq Service Directory Structure:**
 ```sh
-├── groq_service/
-│   ├── app
-│   │   ├── core
-│   │   │   └── prompts.py
-│   │   ├── main.py
-│   │   ├── routes
-│   │   │   └── groq_routes.py
-│   │   └── schemas
-│   │       └── groq_schema.py
-│   ├── Dockerfile
-│   └── requirements.txt
+groq_service/
+├── app
+│   ├── core
+│   │   └── prompts.py
+│   ├── main.py
+│   ├── routes
+│   │   └── groq_routes.py
+│   └── schemas
+│       └── groq_schema.py
+├── Dockerfile
+└── requirements.txt
 ```
 
 

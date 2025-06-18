@@ -1,11 +1,6 @@
 # WhatTheNote
-
 ---
-
-## About the Project
-WhatTheNote is a full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages state-of-the-art LLMs for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration.
-
----
+A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages state-of-the-art LLMs for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration.
 
 ## Features
 - 📄 **PDF Upload & Extraction**: Upload PDF files and extract their content.

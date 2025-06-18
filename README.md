@@ -15,7 +15,7 @@ A full-stack application that transforms PDF documents into interactive, AI-powe
 
 
 
-## Project Structure
+## Project Directory Structure
 
 ```sh
 WhatTheNote/

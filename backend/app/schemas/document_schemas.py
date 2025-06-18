@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict, field_serializer
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import Optional
@@ -15,5 +15,10 @@ class DocumentWithDetails(BaseModel):
     )
     lastViewed: Optional[datetime] = None
 
-    class Config:
-        json_encoders = {datetime: lambda dt: dt.isoformat()}
+    model_config = ConfigDict()
+
+    @field_serializer("uploadedDate", "lastViewed")
+    def serialize_dt(self, value):
+        if value is None:
+            return None
+        return value.isoformat()

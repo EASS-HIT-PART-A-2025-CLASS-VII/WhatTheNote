@@ -1,12 +1,15 @@
 from fastapi import APIRouter, HTTPException
+from dotenv import load_dotenv
 from app.schemas.groq_schema import GroqRequest
 from app.core.prompts import TEXT_CLEANUP_PROMPT
 import os
 import httpx
 import logging
+import traceback
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+load_dotenv()
 
 
 @router.post("/call-groq")
@@ -49,5 +52,7 @@ async def clean_text_endpoint(request: GroqRequest):
     response = await call_groq_endpoint(GroqRequest(prompt=prompt, model=request.model))
     try:
         return {"content": response["choices"][0]["message"]["content"]}
-    except (KeyError, IndexError):
-        raise HTTPException(status_code=500, detail="Invalid response from Groq API")
+    except Exception as e:
+        print("Exception in /clean-text:", e)
+        traceback.print_exc()
+        return {"error": str(e)}

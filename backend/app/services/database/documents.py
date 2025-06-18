@@ -64,11 +64,9 @@ async def get_next_document_id():
 async def get_document(user_id: str, document_id: int):
     try:
         users = await get_users_collection()
-        # print(f"Searching for user {user_id} with document {document_id}")
         user = await users.find_one(
             {"id": user_id, "documents.id": document_id}, {"documents.$": 1}
         )
-        # print(f"Found user document: {bool(user)}")
         if not bool(user) or not user.get("documents"):
             return None
 
@@ -80,7 +78,7 @@ async def get_document(user_id: str, document_id: int):
             "subject": doc["subject"],
             "summary": doc.get("summary", ""),
             "queries": doc.get("queries", []),
-            "uploadedDate": doc["uploadedDate"].isoformat(),
+            "uploadedDate": doc["uploadedDate"],
             "lastViewed": datetime.now(ZoneInfo("Asia/Jerusalem")),
         }
     except InvalidId:

@@ -1,14 +1,62 @@
-# WhatTheNote - AI-Powered Document Intelligence Platform
+# WhatTheNote
 
 ## About the Project
 WhatTheNote is a full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages state-of-the-art LLMs for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration.
 
-**Key capabilities include:**
+## Features
 - 📄 PDF text extraction and analysis
 - 🧠 AI-powered summarization and question answering
 - 🔍 Smart document querying with natural language
 - 📁 Secure document management with user authentication
 - 📈 Interactive dashboard for document insights
+
+---
+
+## Video Demo
+
+
+---
+
+## Project Structure
+
+```sh
+WhatTheNote/
+├── backend
+├── frontend
+├── groq_service
+└── README.md
+```
+
+![Architecture](https://i.imgur.com/DFuQmcI.png)
+
+---
+
+## Running the Project with Docker
+
+1. **Clone the repository**
+    ```sh
+    git clone https://github.com/yourusername/whatthenote.git
+    cd whatthenote
+    ```
+
+2. **Get a Groq API Key**
+    - Sign up at [Groq Console](https://console.groq.com/).
+
+3. **Configure Environment Variables**
+    - Copy `.env.example` to `.env` (if provided) or create a `.env` file in the root.
+    - Set Groq service URL and your Groq API key:
+      ```
+      GROQ_API_KEY=your_groq_api_key
+      GROQ_SERVICE_URL=http://groq:9000
+      ```
+
+4. **Start All Services**
+    ```sh
+    docker-compose up --build
+    ```
+    - Backend
+    - Frontend
+    - Groq Service
 
 ---
 
@@ -183,7 +231,7 @@ frontend/
     │   ├── document.ts
     │   └── user.ts
     └── vite-env.d.ts
-
+```
 
 ---
 
@@ -203,7 +251,6 @@ groq_service/
 └── requirements.txt
 ```
 
-
 ---
 
 ## Features
@@ -218,24 +265,6 @@ groq_service/
 
 ---
 
-## Project Architecture
-![Architecture](https://i.imgur.com/DFuQmcI.png)
-
----
-
-## Project Structure
-
-```sh
-WhatTheNote/
-├── backend
-├── frontend
-├── groq_service
-└── README.md
-```
-
-
----
-
 ## Key Components
 
 - **[`backend/app/llm/groq.py`](backend/app/llm/groq.py)**: Handles async calls to the Groq LLM service for text cleanup and querying.
@@ -243,35 +272,6 @@ WhatTheNote/
 - **[`groq_service/app/routes/groq_routes.py`](groq_service/app/routes/groq_routes.py)**: FastAPI endpoints for Groq LLM operations.
 - **[`frontend/src/pages/DocumentView.tsx`](frontend/src/pages/DocumentView.tsx)**: Main UI for viewing, querying, and interacting with documents.
 - **[`docker-compose.yml`](docker-compose.yml)**: Orchestrates backend, frontend, and Groq service containers.
-
----
-
-## Running the Project with Docker
-
-1. **Clone the repository**
-    ```sh
-    git clone https://github.com/yourusername/whatthenote.git
-    cd whatthenote
-    ```
-
-2. **Get a Groq API Key**
-    - Sign up at [Groq Console](https://console.groq.com/).
-
-3. **Configure Environment Variables**
-    - Copy `.env.example` to `.env` (if provided) or create a `.env` file in the root.
-    - Set Groq service URL and your Groq API key:
-      ```
-      GROQ_API_KEY=your_groq_api_key
-      GROQ_SERVICE_URL=http://groq:9000
-      ```
-
-4. **Start All Services**
-    ```sh
-    docker-compose up --build
-    ```
-    - Backend
-    - Frontend
-    - Groq Service
 
 ---
 

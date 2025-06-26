@@ -12,8 +12,7 @@ A full-stack application that transforms PDF documents into interactive, AI-powe
 
 
 ## Video Demo
-
-
+[![WhatTheNote Demo](https://img.youtube.com/vi/v8X3agJcsSw/0.jpg)](https://youtu.be/v8X3agJcsSw)
 
 ## Project Directory Structure
 
@@ -38,22 +37,29 @@ WhatTheNote/
 
 2. **Get a Groq API Key**
     - Sign up at [Groq Console](https://console.groq.com/).
+    - Create an API key using the button on the homepage
+    - Copy the API key
 
 3. **Configure Environment Variables**
     - Create a `.env` file in the root.
-    - Set Groq service URL and your Groq API key:
+    - Paste the following template in the .env file
       ```
       GROQ_API_KEY=your_groq_api_key
       GROQ_SERVICE_URL=http://groq:9000
       ```
+    - Replace your_groq_api_key with the API key you created eariler
 
 4. **Start All Services**
     ```sh
     docker-compose up --build
     ```
+    **The following services should start:**
     - Backend
     - Frontend
     - Groq Service
+
+5. **Use the website**
+    Head to http://localhost:3000/ and start using WhatTheNote
 
 
 ## Backend

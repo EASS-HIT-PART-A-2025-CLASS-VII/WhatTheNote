@@ -1,6 +1,7 @@
 # WhatTheNote
 A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages Groq LLM for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration.
 
+
 ## Features
 - **PDF Upload & Extraction**: Upload PDF files and extract their content.
 - **AI Summarization**: Generate concise summaries and metadata using LLMs.
@@ -14,8 +15,8 @@ A full-stack application that transforms PDF documents into interactive, AI-powe
 ## Video Demo
 [![WhatTheNote Demo](https://img.youtube.com/vi/v8X3agJcsSw/0.jpg)](https://youtu.be/v8X3agJcsSw)
 
-## Project Directory Structure
 
+## Project Directory Structure
 ```sh
 WhatTheNote/
 ├── backend
@@ -24,15 +25,14 @@ WhatTheNote/
 └── README.md
 ```
 
-## Project Architecture
 
+## Project Architecture
 ![Architecture](https://i.ibb.co/VhNYHc7/Untitled-2025-03-16-2021.png)
 
 
 ## Running the Project with Docker
-
 1. **Install Docker**<br>
-    Install Docker and run it on your machine
+    Install Docker and run it on your machine.
 
 2. **Clone the repository**
     ```sh
@@ -46,16 +46,16 @@ WhatTheNote/
     - Copy the generated API key
 
 4. **Configure Environment Variables**
-    - Create a `.env` file in the root.
+    - Create a `.env` file in the root:
     ```sh
     touch .env
     ```
-    - Add the following content to the `.env` file
+    - Add the following content to the `.env` file:
     ```sh
     echo "GROQ_API_KEY=your_groq_api_key" >> .env
     echo "GROQ_SERVICE_URL=http://groq:9000" >> .env
     ```
-    - Replace your_groq_api_key with the API key you created eariler
+    - Replace `your_groq_api_key` with the actual API key you generated earlier.
 
 5. **Start All Services**
     ```sh
@@ -67,11 +67,10 @@ WhatTheNote/
     - Groq Service
 
 6. **Use the website**<br>
-    Head to http://localhost:3000/ in you browser to start using WhatTheNote
+    Head to http://localhost:3000/ in your browser to start using WhatTheNote
 
 
 ## Backend
-
 **Backend Tech Stack Includes:**
 - FastAPI (Python 3.13+)
 - MongoDB (hosted on an external server)
@@ -121,7 +120,6 @@ backend/
 
 
 ## Frontend
-
 **Frontend Tech Stack Includes:**
 - React (20+)
 - TypeScript

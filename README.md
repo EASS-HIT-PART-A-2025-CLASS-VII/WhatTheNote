@@ -58,7 +58,7 @@ WhatTheNote/
     - Frontend
     - Groq Service
 
-5. **Use the website**  
+5. **Use the website**<br>
     Head to http://localhost:3000/ and start using WhatTheNote
 
 

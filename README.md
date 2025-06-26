@@ -17,8 +17,8 @@
 
 ## Demo Video
 <p align="center">
-  <a href="https://youtu.be/v8X3agJcsSw">
-    <img src="https://img.youtube.com/vi/v8X3agJcsSw/0.jpg" alt="WhatTheNote Demo" />
+  <a href="https://youtu.be/j80cycrmFzI">
+    <img src="https://img.youtube.com/vi/j80cycrmFzI/0.jpg" alt="WhatTheNote Demo" />
   </a>
 </p>
 

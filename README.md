@@ -1,6 +1,7 @@
 # WhatTheNote
 <p align="center">
-    A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages Groq LLM for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration. <br>
+    A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages Groq LLM for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration. 
+    
   <img src="https://i.ibb.co/DDkvxPn3/logo-resized-padded.png" alt="Logo" />
 </p>
 
@@ -14,7 +15,7 @@
 - **Dashboard**: Visualize and interact with your document collection.
 
 
-## Video Demo
+## Demo Video
 <p align="center">
   <a href="https://youtu.be/v8X3agJcsSw">
     <img src="https://img.youtube.com/vi/v8X3agJcsSw/0.jpg" alt="WhatTheNote Demo" />
@@ -127,7 +128,8 @@ backend/
 
 ## Frontend
 **Frontend Tech Stack Includes:**
-- React (20+)
+- React
+- NodeJS (20+)
 - TypeScript
 - Tailwind CSS
 - React Router

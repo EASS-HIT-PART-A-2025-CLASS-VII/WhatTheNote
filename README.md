@@ -24,7 +24,7 @@ WhatTheNote/
 └── README.md
 ```
 
-![Architecture](https://i.imgur.com/DFuQmcI.png)
+![Architecture](https://ibb.co/2L6381D)
 
 
 ## Running the Project with Docker

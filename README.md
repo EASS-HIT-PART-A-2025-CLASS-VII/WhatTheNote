@@ -1,6 +1,9 @@
 # WhatTheNote
 A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages Groq LLM for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration.
 
+<p align="center">
+  <img src="https://i.ibb.co/DDkvxPn3/logo-resized-padded.png" alt="Logo" />
+</p>
 
 ## Features
 - **PDF Upload & Extraction**: Upload PDF files and extract their content.

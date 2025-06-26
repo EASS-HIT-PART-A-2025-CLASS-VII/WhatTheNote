@@ -1,19 +1,21 @@
-
-import React from 'react';
-import { Clock, Layers } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import DocumentGrid from './DocumentGrid';
-import NoDocumentsFound from './NoDocumentsFound';
-import SubjectGrouping from './SubjectGrouping';
-import { Document } from '../../types/document';
-
-
+import React from "react";
+import { Clock, Layers } from "lucide-react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs";
+import DocumentGrid from "./DocumentGrid";
+import NoDocumentsFound from "./NoDocumentsFound";
+import SubjectGrouping from "./SubjectGrouping";
+import { Document } from "../../types/document";
 
 interface DocumentTabsProps {
   filteredDocuments: Document[];
   isUploading: boolean;
   handleFileSelect: (file: File) => Promise<void>;
-  viewMode: 'grid' | 'list';
+  viewMode: "grid" | "list";
   subjectGroups: Record<string, Document[]>;
   expandedSubjects: Record<string, boolean>;
   toggleSubjectExpanded: (subject: string) => void;
@@ -27,13 +29,14 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
   viewMode,
   subjectGroups,
   expandedSubjects,
-  toggleSubjectExpanded
+  toggleSubjectExpanded,
 }) => {
   const recentDocuments = filteredDocuments
-    .filter(doc => doc.lastViewed)
-    .sort((a, b) => (b.lastViewed?.getTime() ?? 0) - (a.lastViewed?.getTime() ?? 0));
+    .filter((doc) => doc.lastViewed)
+    .sort(
+      (a, b) => (b.lastViewed?.getTime() ?? 0) - (a.lastViewed?.getTime() ?? 0),
+    );
 
-  
   return (
     <Tabs defaultValue="all" className="w-full">
       <TabsList className="mb-6">
@@ -47,15 +50,18 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
           By Subject
         </TabsTrigger>
       </TabsList>
-      
+
       <TabsContent value="all" className="mt-0">
         {filteredDocuments.length === 0 ? (
-          <NoDocumentsFound searchQuery={searchQuery} onFileSelect={handleFileSelect} />
+          <NoDocumentsFound
+            searchQuery={searchQuery}
+            onFileSelect={handleFileSelect}
+          />
         ) : (
           <DocumentGrid documents={filteredDocuments} viewMode={viewMode} />
         )}
       </TabsContent>
-      
+
       <TabsContent value="recent" className="mt-0">
         {recentDocuments.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
@@ -65,10 +71,9 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
           <DocumentGrid documents={recentDocuments} viewMode={viewMode} />
         )}
       </TabsContent>
-      
-      
+
       <TabsContent value="subjects" className="mt-0">
-        <SubjectGrouping 
+        <SubjectGrouping
           subjectGroups={subjectGroups}
           expandedSubjects={expandedSubjects}
           toggleSubjectExpanded={toggleSubjectExpanded}

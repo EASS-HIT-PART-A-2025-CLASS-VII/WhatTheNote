@@ -1,6 +1,6 @@
 // User and authentication related types
 
-import { Document } from './document';
+import { Document } from "./document";
 
 // Query interface for document Q&A
 export interface Query {

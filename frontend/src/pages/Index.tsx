@@ -7,21 +7,19 @@ import Footer from "../components/layout/Footer";
 import FeatureCard from "../components/ui/FeatureCard";
 import { FileText, Brain, Search, Upload, Bot, Cpu } from "lucide-react";
 import AnimatedLogo from "../components/ui/AnimatedLogo";
-import { LucideIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../lib/AuthContext';
+import { LucideIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../lib/AuthContext";
 
 const MotionLink = motion(Link);
 const MotionButton = motion(Button);
 
-// Define the type for a feature
 type Feature = {
   icon: string;
   title: string;
   description: string;
 };
 
-// Map icon names to components
 const iconMap: Record<string, LucideIcon> = {
   FileText,
   Brain,
@@ -35,11 +33,9 @@ const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Use the Feature type for the features state
   const [features, setFeatures] = useState<Feature[]>([]);
 
   useEffect(() => {
-    // Fetch features data from FastAPI backend
     fetch("http://localhost:8000/features")
       .then((response) => response.json())
       .then((data) => {
@@ -88,9 +84,9 @@ const Index = () => {
               whileTap={{ scale: 0.98 }}
               onClick={() => {
                 if (user) {
-                  navigate('/dashboard');
+                  navigate("/dashboard");
                 } else {
-                  navigate('/login');
+                  navigate("/login");
                 }
               }}
             >
@@ -111,8 +107,9 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => {
-              const normalizedIconKey = feature.icon.replace(/[-_]/g, ""); // Normalize key
-              const IconComponent = iconMap[normalizedIconKey as keyof typeof iconMap] || Cpu; // Fallback to Cpu
+              const normalizedIconKey = feature.icon.replace(/[-_]/g, "");
+              const IconComponent =
+                iconMap[normalizedIconKey as keyof typeof iconMap] || Cpu;
 
               return (
                 <motion.div
@@ -123,7 +120,7 @@ const Index = () => {
                   viewport={{ once: true }}
                 >
                   <FeatureCard
-                    icon={IconComponent} // Ensure icon renders
+                    icon={IconComponent}
                     title={feature.title}
                     description={feature.description}
                   />

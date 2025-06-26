@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "../components/ui/button";
@@ -6,10 +6,9 @@ import FileUpload from "../components/ui/FileUpload";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { FileQuestion, Loader2 } from "lucide-react";
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../lib/AuthContext';
-import { toast } from 'sonner';
-
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../lib/AuthContext";
+import { toast } from "sonner";
 
 const Upload = () => {
   const { user } = useAuth();
@@ -28,7 +27,7 @@ const Upload = () => {
   useEffect(() => {
     console.error(
       "404 Error: User attempted to access non-existent route:",
-      location.pathname
+      location.pathname,
     );
   }, [location.pathname]);
 
@@ -41,21 +40,25 @@ const Upload = () => {
             <div className="rounded-full bg-primary/10 p-5 w-20 h-20 flex items-center justify-center mx-auto mb-6">
               <FileQuestion className="h-10 w-10 text-primary" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Upload PDF</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+              Upload PDF
+            </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-md mx-auto">
               Please upload your PDF file below.
             </p>
             <FileUpload
-              allowedTypes={['.pdf']}
+              allowedTypes={[".pdf"]}
               maxSize={10}
               onFileSelect={(selectedFile) => setFile(selectedFile)}
-              onError={(error) => toast.error(error, {
-                action: {
-                  label: 'Close',
-                  onClick: () => handleClearSelection(),
-                },
-                duration: 5000,
-              })}
+              onError={(error) =>
+                toast.error(error, {
+                  action: {
+                    label: "Close",
+                    onClick: () => handleClearSelection(),
+                  },
+                  duration: 5000,
+                })
+              }
               className="max-w-md mx-auto"
             />
           </div>
@@ -64,7 +67,7 @@ const Upload = () => {
       </div>
     );
   } else {
-    navigate('/login');
+    navigate("/login");
   }
 };
 

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playwrite+HU:wght@300&display=swap'); /* Handwritten font import */
+@import url("https://fonts.googleapis.com/css2?family=Playwrite+HU:wght@300&display=swap"); /* Handwritten font import */
 
 @tailwind base;
 @tailwind components;
@@ -86,7 +86,7 @@
   }
 
   .logo-font {
-    font-family: 'Playwrite HU', serif; /* Handwritten font usage */
+    font-family: "Playwrite HU", serif; /* Handwritten font usage */
     font-weight: 300; /* Light 300 weight */
   }
 
@@ -96,7 +96,9 @@
 
   body {
     @apply bg-background text-foreground font-sans;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
   }
 }
 
@@ -141,7 +143,9 @@
 .page-transition-enter-active {
   opacity: 1;
   transform: scale(1);
-  transition: opacity 300ms, transform 300ms;
+  transition:
+    opacity 300ms,
+    transform 300ms;
 }
 
 .page-transition-exit {
@@ -152,5 +156,7 @@
 .page-transition-exit-active {
   opacity: 0;
   transform: scale(0.98);
-  transition: opacity 300ms, transform 300ms;
+  transition:
+    opacity 300ms,
+    transform 300ms;
 }

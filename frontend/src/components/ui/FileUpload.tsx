@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '../../components/ui/button';
-import { Progress } from '../../components/ui/progress';
-import { Upload, File, Check, AlertCircle } from 'lucide-react';
-import { toast } from 'sonner';
-import { cn } from '../../lib/utils';
+import React, { useState, useRef } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "../../components/ui/button";
+import { Progress } from "../../components/ui/progress";
+import { Upload, File, Check, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
+import { cn } from "../../lib/utils";
 
 interface FileUploadProps {
   onFileSelect?: (file: File) => void;
@@ -16,9 +16,9 @@ interface FileUploadProps {
 
 const FileUpload: React.FC<FileUploadProps> = ({
   onFileSelect,
-  allowedTypes = ['.pdf'],
+  allowedTypes = [".pdf"],
   maxSize = 10, // Default 10MB
-  className
+  className,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -40,9 +40,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   const validateFile = (file: File): boolean => {
     // Check file type
-    const fileType = `.${file.name.split('.').pop()?.toLowerCase()}`;
-    if (!allowedTypes.includes(fileType) && !allowedTypes.includes('*')) {
-      const errorMsg = `Invalid file type. Allowed types: ${allowedTypes.join(', ')}`;
+    const fileType = `.${file.name.split(".").pop()?.toLowerCase()}`;
+    if (!allowedTypes.includes(fileType) && !allowedTypes.includes("*")) {
+      const errorMsg = `Invalid file type. Allowed types: ${allowedTypes.join(", ")}`;
       setUploadError(errorMsg);
       return false;
     }
@@ -61,7 +61,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
       if (validateFile(file)) {
@@ -98,22 +98,22 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const handleFileUpload = async (file: File) => {
     setIsUploading(true);
     setProgress(0);
-    
+
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const response = await fetch('http://localhost:8000/documents/upload', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/documents/upload", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: formData
+        body: formData,
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-      throw new Error(errorData.detail || 'Upload failed');
+        throw new Error(errorData.detail || "Upload failed");
       }
 
       const result = await response.json();
@@ -122,14 +122,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
       if (result && result.id) {
         setDocumentId(result.id);
       } else {
-        console.warn('Document ID not found in upload response:', result);
+        console.warn("Document ID not found in upload response:", result);
       }
       toast.success(`${file.name} uploaded successfully!`);
       return result;
     } catch (error) {
       setIsUploading(false);
-      setUploadError(error instanceof Error ? error.message : 'Upload failed');
-      toast.error('Upload failed. Please try again.');
+      setUploadError(error instanceof Error ? error.message : "Upload failed");
+      toast.error("Upload failed. Please try again.");
       return null;
     }
   };
@@ -141,7 +141,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     setUploadError(null);
     setDocumentId(null); // Clear document ID on reset
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -151,12 +151,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
         type="file"
         ref={fileInputRef}
         onChange={handleFileSelect}
-        accept={allowedTypes.join(',')}
+        accept={allowedTypes.join(",")}
         className="hidden"
         id="file-upload"
         disabled={isUploading}
       />
-      
+
       {uploadError && (
         <div className="mb-4">
           <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg">
@@ -165,7 +165,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </div>
         </div>
       )}
-      
+
       {!selectedFile ? (
         <div
           onDragOver={handleDragOver}
@@ -173,12 +173,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
           onDrop={handleDrop}
           className={cn(
             "border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200",
-            isDragging ? "border-primary bg-primary/5" : "border-muted hover:border-primary/50",
-            "cursor-pointer"
+            isDragging
+              ? "border-primary bg-primary/5"
+              : "border-muted hover:border-primary/50",
+            "cursor-pointer",
           )}
           onClick={handleButtonClick}
           aria-disabled={isUploading}
-          style={{ pointerEvents: isUploading ? 'none' : 'auto' }}
+          style={{ pointerEvents: isUploading ? "none" : "auto" }}
         >
           <div className="flex flex-col items-center justify-center space-y-4">
             <div className="rounded-full bg-primary/10 p-4">
@@ -195,7 +197,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Max size: {maxSize}MB | Formats: {allowedTypes.join(', ')}
+                Max size: {maxSize}MB | Formats: {allowedTypes.join(", ")}
               </p>
             </div>
           </div>
@@ -216,7 +218,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 </p>
               </div>
             </div>
-            
+
             <div>
               {isUploading ? (
                 <Button variant="outline" size="sm" disabled>
@@ -235,18 +237,23 @@ const FileUpload: React.FC<FileUploadProps> = ({
               )}
             </div>
           </div>
-          
+
           {uploadError ? (
             <div className="bg-destructive/10 rounded p-3 mb-2 flex items-center text-sm text-destructive">
               <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
               {uploadError}
             </div>
           ) : null}
-          
+
           <div className="space-y-1">
             <Progress value={progress} className="h-2" />
             <p className="text-xs text-right text-muted-foreground">
-              {progress}% {isUploading ? 'Uploading...' : progress === 100 ? 'Complete' : ''}
+              {progress}%{" "}
+              {isUploading
+                ? "Uploading..."
+                : progress === 100
+                  ? "Complete"
+                  : ""}
             </p>
           </div>
 

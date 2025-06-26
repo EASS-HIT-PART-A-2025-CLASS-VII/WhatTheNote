@@ -1,6 +1,5 @@
-
-import React from 'react';
-import DocumentCard from '../../components/ui/DocumentCard';
+import React from "react";
+import DocumentCard from "../../components/ui/DocumentCard";
 
 interface Document {
   id: number;
@@ -15,7 +14,7 @@ interface Document {
 
 interface DocumentGridProps {
   documents: Document[];
-  viewMode: 'grid' | 'list';
+  viewMode: "grid" | "list";
 }
 
 const DocumentGrid: React.FC<DocumentGridProps> = ({ documents, viewMode }) => {
@@ -24,7 +23,9 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({ documents, viewMode }) => {
   }
 
   return (
-    <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6 ${viewMode === 'list' ? 'min-w-[800px]' : ''}`}>
+    <div
+      className={`grid ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"} gap-6 ${viewMode === "list" ? "min-w-[800px]" : ""}`}
+    >
       {documents.map((doc) => (
         <DocumentCard
           key={doc.id}
@@ -35,7 +36,7 @@ const DocumentGrid: React.FC<DocumentGridProps> = ({ documents, viewMode }) => {
           lastViewed={doc.lastViewed}
           isProcessed={doc.isProcessed}
           subject={doc.subject}
-          className={viewMode === 'list' ? 'flex flex-col md:flex-row' : ''}
+          className={viewMode === "list" ? "flex flex-col md:flex-row" : ""}
           summary={doc.summary}
         />
       ))}

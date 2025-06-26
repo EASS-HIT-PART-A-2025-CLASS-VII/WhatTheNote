@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '../../components/ui/button';
-import { FileUp } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Button } from "../../components/ui/button";
+import { FileUp } from "lucide-react";
 
 const DashboardHeader: React.FC = () => {
   return (
@@ -13,7 +12,7 @@ const DashboardHeader: React.FC = () => {
           Upload, manage, and analyze your notes and documents
         </p>
       </div>
-      
+
       <Button asChild>
         <Link to="/upload">
           <FileUp className="mr-2 h-4 w-4" />

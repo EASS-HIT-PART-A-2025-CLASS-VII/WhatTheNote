@@ -1,9 +1,13 @@
+import React from "react";
+import { Layers, Plus } from "lucide-react";
+import { Button } from "../../components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../../components/ui/collapsible";
+import DocumentGrid from "./DocumentGrid";
 
-import React from 'react';
-import { Layers, Plus } from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../components/ui/collapsible';
-import DocumentGrid from './DocumentGrid';
 interface Document {
   id: number;
   title: string;
@@ -17,14 +21,14 @@ interface SubjectGroupingProps {
   subjectGroups: Record<string, Document[]>;
   expandedSubjects: Record<string, boolean>;
   toggleSubjectExpanded: (subject: string) => void;
-  viewMode: 'grid' | 'list';
+  viewMode: "grid" | "list";
 }
 
 const SubjectGrouping: React.FC<SubjectGroupingProps> = ({
   subjectGroups,
   expandedSubjects,
   toggleSubjectExpanded,
-  viewMode
+  viewMode,
 }) => {
   if (Object.keys(subjectGroups).length === 0) {
     return (
@@ -50,10 +54,14 @@ const SubjectGrouping: React.FC<SubjectGroupingProps> = ({
             <div className="flex items-center gap-2">
               <Layers className="h-5 w-5 text-primary" />
               <h3 className="text-lg font-semibold">{subject}</h3>
-              <span className="text-muted-foreground text-sm">({docs.length} documents)</span>
+              <span className="text-muted-foreground text-sm">
+                ({docs.length} documents)
+              </span>
             </div>
             <Button variant="ghost" size="icon">
-              <Plus className={`h-4 w-4 transition-transform ${expandedSubjects[subject] ? 'rotate-45' : ''}`} />
+              <Plus
+                className={`h-4 w-4 transition-transform ${expandedSubjects[subject] ? "rotate-45" : ""}`}
+              />
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent>

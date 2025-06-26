@@ -1,9 +1,14 @@
-
-import React, { useEffect } from 'react';
-import { Input } from '../../components/ui/input';
-import { Button } from '../../components/ui/button';
-import { Search, Grid3X3, ListFilter } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import React, { useEffect } from "react";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+import { Search, Grid3X3, ListFilter } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 
 interface SearchFiltersProps {
   searchQuery: string;
@@ -11,8 +16,8 @@ interface SearchFiltersProps {
   selectedSubject: string;
   setSelectedSubject: (subject: string) => void;
   subjectOptions: string[];
-  viewMode: 'grid' | 'list';
-  setViewMode: (mode: 'grid' | 'list') => void;
+  viewMode: "grid" | "list";
+  setViewMode: (mode: "grid" | "list") => void;
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({
@@ -22,20 +27,20 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   setSelectedSubject,
   subjectOptions,
   viewMode,
-  setViewMode
+  setViewMode,
 }) => {
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768 && viewMode === 'list') {
-        setViewMode('grid');
+      if (window.innerWidth < 768 && viewMode === "list") {
+        setViewMode("grid");
       }
     };
-  
-    window.addEventListener('resize', handleResize);
+
+    window.addEventListener("resize", handleResize);
     handleResize();
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [viewMode, setViewMode]);
-  
+
   return (
     <div className="mb-8 flex flex-col md:flex-row gap-4">
       <div className="relative flex-1">
@@ -47,34 +52,34 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-      
+
       <Select value={selectedSubject} onValueChange={setSelectedSubject}>
         <SelectTrigger className="w-full md:w-[180px]">
           <SelectValue placeholder="Select Subject" />
         </SelectTrigger>
         <SelectContent>
-          {subjectOptions.map(subject => (
+          {subjectOptions.map((subject) => (
             <SelectItem key={subject} value={subject}>
               {subject}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
-      
+
       <div className="flex items-center gap-2">
         <Button
-          variant={viewMode === 'grid' ? 'default' : 'outline'}
+          variant={viewMode === "grid" ? "default" : "outline"}
           size="icon"
-          onClick={() => setViewMode('grid')}
+          onClick={() => setViewMode("grid")}
           aria-label="Grid view"
           className="hidden md:inline-flex"
         >
           <Grid3X3 className="h-4 w-4" />
         </Button>
         <Button
-          variant={viewMode === 'list' ? 'default' : 'outline'}
+          variant={viewMode === "list" ? "default" : "outline"}
           size="icon"
-          onClick={() => setViewMode('list')}
+          onClick={() => setViewMode("list")}
           aria-label="List view"
           className="hidden md:inline-flex"
         >

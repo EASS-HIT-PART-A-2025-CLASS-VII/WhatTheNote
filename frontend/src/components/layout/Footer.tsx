@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { Link } from 'react-router-dom';
-import AnimatedLogo from '../../components/ui/AnimatedLogo';
+import React from "react";
+import { Link } from "react-router-dom";
+import AnimatedLogo from "../../components/ui/AnimatedLogo";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -13,7 +12,8 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <AnimatedLogo className="text-xl" />
             <p className="text-muted-foreground text-sm max-w-xs">
-              AI-powered note processing application for effortless document summarization and query.
+              AI-powered note processing application for effortless document
+              summarization and query.
             </p>
           </div>
 
@@ -21,12 +21,18 @@ const Footer: React.FC = () => {
             <h3 className="font-semibold">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-muted-foreground text-sm hover:text-primary transition-colors">
+                <Link
+                  to="/"
+                  className="text-muted-foreground text-sm hover:text-primary transition-colors"
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard?subject=All%20Subjects" className="text-muted-foreground text-sm hover:text-primary transition-colors">
+                <Link
+                  to="/dashboard?subject=All%20Subjects"
+                  className="text-muted-foreground text-sm hover:text-primary transition-colors"
+                >
                   Dashboard
                 </Link>
               </li>
@@ -37,12 +43,18 @@ const Footer: React.FC = () => {
             <h3 className="font-semibold">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/privacy" className="text-muted-foreground text-sm hover:text-primary transition-colors">
+                <Link
+                  to="/privacy"
+                  className="text-muted-foreground text-sm hover:text-primary transition-colors"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-muted-foreground text-sm hover:text-primary transition-colors">
+                <Link
+                  to="/terms"
+                  className="text-muted-foreground text-sm hover:text-primary transition-colors"
+                >
                   Terms of Service
                 </Link>
               </li>

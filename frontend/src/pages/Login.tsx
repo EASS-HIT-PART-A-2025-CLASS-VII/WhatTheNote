@@ -1,46 +1,49 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
-import { Label } from '../components/ui/label';
-import { motion } from 'framer-motion';
-import { Lock, Loader2 } from 'lucide-react';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../components/ui/card";
+import { Label } from "../components/ui/label";
+import { motion } from "framer-motion";
+import { Lock, Loader2 } from "lucide-react";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
-const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
-      // Import the login function from our API utility
-      const { login } = await import('../lib/api');
-      
-      // Call the login API
+      const { login } = await import("../lib/api");
+
       const result = await login(formData.email, formData.password);
-      
+
       if (result.error) {
-        setError(result.error ? (result as { message: string }).message : '');
+        setError(result.error ? (result as { message: string }).message : "");
         return;
       }
-      
-      // On success, reload page
-      navigate('/');
+
+      navigate("/");
       window.location.reload();
     } catch (err) {
-      setError('An error occurred during login. Please try again.');
-      console.error('Login error:', err);
+      setError("An error occurred during login. Please try again.");
+      console.error("Login error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -48,9 +51,9 @@ const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -68,10 +71,12 @@ const [isLoading, setIsLoading] = useState(false);
             <div className="rounded-full bg-primary/10 p-5 w-20 h-20 flex items-center justify-center mx-auto mb-6">
               <Lock className="h-10 w-10 text-primary" />
             </div>
-            
+
             <Card>
               <CardHeader className="space-y-1">
-                <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
+                <CardTitle className="text-2xl text-center">
+                  Welcome back
+                </CardTitle>
                 <CardDescription className="text-center">
                   Enter your email and password to login
                 </CardDescription>
@@ -101,7 +106,7 @@ const [isLoading, setIsLoading] = useState(false);
                       onChange={handleChange}
                     />
                   </div>
-                  
+
                   {error && (
                     <div className="text-sm text-red-500 text-center">
                       {error}
@@ -111,11 +116,13 @@ const [isLoading, setIsLoading] = useState(false);
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : 'Sign in'}
+                    ) : (
+                      "Sign in"
+                    )}
                   </Button>
 
                   <div className="text-center text-sm text-muted-foreground">
-                    Don't have an account?{' '}
+                    Don't have an account?{" "}
                     <Link to="/signup" className="text-primary hover:underline">
                       Sign up
                     </Link>

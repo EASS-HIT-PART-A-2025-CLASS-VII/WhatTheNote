@@ -1,4 +1,3 @@
-
 export interface Document {
   id: number;
   title: string;
@@ -8,4 +7,4 @@ export interface Document {
   uploadedDate?: Date;
 }
 
-export type ViewMode = 'grid' | 'list';
+export type ViewMode = "grid" | "list";

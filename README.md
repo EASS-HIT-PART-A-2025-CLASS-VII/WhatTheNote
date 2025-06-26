@@ -30,7 +30,7 @@ WhatTheNote/
 
 
 ## Project Architecture
-![Architecture](https://i.ibb.co/VhNYHc7/Untitled-2025-03-16-2021.png)
+![Architecture](https://i.ibb.co/hRkXj1Wn/Untitled-2025-03-16-2021.png)
 
 
 ## Running the Project with Docker

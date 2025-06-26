@@ -2,13 +2,13 @@
 A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages Groq LLM for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration.
 
 ## Features
-- 📄 **PDF Upload & Extraction**: Upload PDF files and extract their content.
-- 🧠 **AI Summarization**: Generate concise summaries and metadata using LLMs.
-- 🔍 **Smart Querying**: Ask questions about your documents and get context-aware answers.
-- 🪄 **AI Content Cleanup**: Convert raw PDF text into clean, readable Markdown.
-- 📁 **Document Management**: Organize, view, and filter your documents.
-- 🔒 **Authentication**: Secure user login and document access.
-- 📊 **Dashboard**: Visualize and interact with your document collection.
+- **PDF Upload & Extraction**: Upload PDF files and extract their content.
+- **AI Summarization**: Generate concise summaries and metadata using LLMs.
+- **Smart Querying**: Ask questions about your documents and get context-aware answers.
+- **AI Content Cleanup**: Convert raw PDF text into clean, readable Markdown.
+- **Document Management**: Organize, view, and filter your documents.
+- **Authentication**: Secure user login and document access.
+- **Dashboard**: Visualize and interact with your document collection.
 
 
 ## Video Demo
@@ -23,6 +23,8 @@ WhatTheNote/
 ├── groq_service
 └── README.md
 ```
+
+## Project Architecture
 
 ![Architecture](https://i.ibb.co/VhNYHc7/Untitled-2025-03-16-2021.png)
 

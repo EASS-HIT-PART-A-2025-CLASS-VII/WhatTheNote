@@ -29,18 +29,21 @@ WhatTheNote/
 
 ## Running the Project with Docker
 
-1. **Clone the repository**
+1. **Install Docker**<br>
+    Install Docker on your machine and run it
+
+2. **Clone the repository**
     ```sh
-    git clone https://github.com/yourusername/whatthenote.git
-    cd whatthenote
+    git clone https://github.com/EASS-HIT-PART-A-2025-CLASS-VII/WhatTheNote
+    cd WhatTheNote
     ```
 
-2. **Get a Groq API Key**
+3. **Get a Groq API Key**
     - Sign up at [Groq Console](https://console.groq.com/).
     - Create an API key using the button on the homepage
     - Copy the API key
 
-3. **Configure Environment Variables**
+4. **Configure Environment Variables**
     - Create a `.env` file in the root.
     - Paste the following template in the .env file
       ```
@@ -49,7 +52,7 @@ WhatTheNote/
       ```
     - Replace your_groq_api_key with the API key you created eariler
 
-4. **Start All Services**
+5. **Start All Services**
     ```sh
     docker-compose up --build
     ```
@@ -58,18 +61,18 @@ WhatTheNote/
     - Frontend
     - Groq Service
 
-5. **Use the website**<br>
+6. **Use the website**<br>
     Head to http://localhost:3000/ and start using WhatTheNote
 
 
 ## Backend
 
-**Backend Tech Stack:**
-- [FastAPI](https://fastapi.tiangolo.com/) (Python 3.13+)
-- [MongoDB](https://www.mongodb.com/) (Document storage, **hosted on an external server**)
-- [Groq API](https://console.groq.com/) (Cloud LLM inference)
-- [Pydantic](https://docs.pydantic.dev/) (Validation)
-- [bcrypt](https://pypi.org/project/bcrypt/) (Password hashing)
+**Backend Tech Stack Includes:**
+- FastAPI (Python 3.13+)
+- MongoDB (hosted on an external server)
+- Groq API (Cloud LLM inference)
+- Pydantic (Validation)
+- bcrypt (Password hashing)
 
 **Backend Directory Structure:**
 ```sh
@@ -114,14 +117,11 @@ backend/
 
 ## Frontend
 
-**Frontend Tech Stack**
-- [React](https://react.dev/) (20+)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/) (UI components)
-- [React Router](https://reactrouter.com/)
-- [Axios](https://axios-http.com/) (API calls)
-- [react-markdown](https://github.com/remarkjs/react-markdown) (Markdown rendering)
+**Frontend Tech Stack Includes:**
+- React (20+)
+- TypeScript
+- Tailwind CSS
+- React Router
 
 **Frontend Directory Structure:**
 ```sh
@@ -251,8 +251,8 @@ groq_service/
 └── requirements.txt
 ```
 
-## Key Components
 
+## Key Components
 - **[`backend/app/llm/groq.py`](backend/app/llm/groq.py)**: Handles async calls to the Groq LLM service for text cleanup and querying.
 - **[`backend/app/llm/prompts.py`](backend/app/llm/prompts.py)**: Contains prompt templates for summarization, querying, and cleanup.
 - **[`groq_service/app/routes/groq_routes.py`](groq_service/app/routes/groq_routes.py)**: FastAPI endpoints for Groq LLM operations.

@@ -30,7 +30,7 @@ WhatTheNote/
 ## Running the Project with Docker
 
 1. **Install Docker**<br>
-    Install Docker on your machine and run it
+    Install Docker and run it on your machine
 
 2. **Clone the repository**
     ```sh
@@ -41,15 +41,18 @@ WhatTheNote/
 3. **Get a Groq API Key**
     - Sign up at [Groq Console](https://console.groq.com/).
     - Create an API key using the button on the homepage
-    - Copy the API key
+    - Copy the generated API key
 
 4. **Configure Environment Variables**
     - Create a `.env` file in the root.
-    - Paste the following template in the .env file
-      ```
-      GROQ_API_KEY=your_groq_api_key
-      GROQ_SERVICE_URL=http://groq:9000
-      ```
+    ```sh
+    touch .env
+    ```
+    - Add the following content to the `.env` file
+    ```sh
+    echo "GROQ_API_KEY=your_groq_api_key" >> .env
+    echo "GROQ_SERVICE_URL=http://groq:9000" >> .env
+    ```
     - Replace your_groq_api_key with the API key you created eariler
 
 5. **Start All Services**
@@ -62,7 +65,7 @@ WhatTheNote/
     - Groq Service
 
 6. **Use the website**<br>
-    Head to http://localhost:3000/ and start using WhatTheNote
+    Head to http://localhost:3000/ in you browser to start using WhatTheNote
 
 
 ## Backend

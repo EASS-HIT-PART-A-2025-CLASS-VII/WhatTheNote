@@ -1,11 +1,13 @@
 # WhatTheNote
 <div align="center">
-    A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages Groq LLM for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration. 
+A full-stack application that transforms PDF documents into interactive, AI-powered knowledge bases. It leverages Groq LLM for summarization, querying, and content cleanup, providing a seamless experience for document management and exploration. 
+
+<br><br>
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
-[![Gemini AI](https://img.shields.io/badge/Gemini-AI-blue?style=for-the-badge&logo=google&logoColor=white)](https://gemini.google.com/chat)
+[![Groq AI](https://img.shields.io/badge/Groq-AI-blue?style=for-the-badge&logo=Groq&logoColor=white)](https://groq.com/)
 [![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/)
     
 <img src="https://i.ibb.co/pvt184tm/What-The-Note-seamless-sharpened.jpg" alt="Logo" />
@@ -49,7 +51,7 @@ WhatTheNote/
 
 2. **Clone the repository**
     ```sh
-    git clone https://github.com/EASS-HIT-PART-A-2025-CLASS-VII/WhatTheNote
+    git clone https://github.com/EASS-HIT-PART-A-2025-CLASS-VII/WhatTheNote.git
     cd WhatTheNote
     ```
 

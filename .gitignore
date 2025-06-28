@@ -23,7 +23,8 @@ Thumbs.db
 
 # Ignore Python cache and compiled files
 __pycache__/
-/backend/__init__.py
+**/__pycache__/
+**/__init__.py
 *.py[cod]
 *.so
 *.egg-info/
@@ -35,7 +36,8 @@ __pycache__/
 
 # pytest
 .pytest_cache/
-*.pytest_cache/
+**/.pytest_cache/
+.cache/
 
 # Other
 *.todo

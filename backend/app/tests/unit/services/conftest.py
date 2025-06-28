@@ -20,8 +20,11 @@ def mock_db():
 @pytest.fixture
 def mock_users_collection():
     """Mock users collection"""
-    with patch("app.services.database.user.get_users_collection", new_callable=AsyncMock) as mock_get_users, \
-         patch("app.services.database.documents.get_users_collection", new_callable=AsyncMock) as mock_get_docs_users:
+    with patch(
+        "app.services.database.user.get_users_collection", new_callable=AsyncMock
+    ) as mock_get_users, patch(
+        "app.services.database.documents.get_users_collection", new_callable=AsyncMock
+    ) as mock_get_docs_users:
         mock_collection = AsyncMock()
         mock_get_users.return_value = mock_collection
         mock_get_docs_users.return_value = mock_collection

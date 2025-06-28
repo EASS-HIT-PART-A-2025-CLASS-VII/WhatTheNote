@@ -2,6 +2,8 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+RUN apk update && apk add --no-cache curl
+
 COPY package.json package-lock.json ./
 RUN npm install
 

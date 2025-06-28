@@ -29,6 +29,11 @@ def favicon():
     return {}
 
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "backend"}
+
+
 @app.get("/features")
 async def get_features():
     return [

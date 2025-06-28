@@ -6,7 +6,11 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent))
-from app.services.database.documents import get_user_documents, get_document, add_document_to_user
+from app.services.database.documents import (
+    get_user_documents,
+    get_document,
+    add_document_to_user,
+)
 
 
 @pytest.mark.asyncio

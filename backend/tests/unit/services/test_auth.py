@@ -1,11 +1,8 @@
-import sys
-from pathlib import Path
 import pytest
 from unittest.mock import patch, AsyncMock
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent))
 from app.services.auth import authenticate_user, create_access_token
 from app.schemas.user_schemas import UserInDB
 
@@ -38,17 +35,21 @@ async def test_authenticate_user_success(mock_db):
 @pytest.mark.asyncio
 async def test_authenticate_user_wrong_password(mock_db):
 
-    mock_db.users.find_one.return_value = {
+    mock_user_data = {
         "id": "1",
         "email": "test@example.com",
         "name": "Test User",
         "hashed_password": "hashed_password",
-        "createdAt": "2023-01-01T00:00:00+02:00",
+        "createdAt": datetime(2023, 1, 1, 0, 0, 0, tzinfo=ZoneInfo("Asia/Jerusalem")),
+        "documents": [],
     }
 
-    with patch("app.services.auth.verify_password", return_value=False):
-        user = await authenticate_user(mock_db, "test@example.com", "wrong_password")
-        assert user == False
+    with patch(
+        "app.services.auth.get_user_by_email", AsyncMock(return_value=mock_user_data)
+    ):
+        with patch("app.services.auth.verify_password", return_value=False):
+            user = await authenticate_user(mock_db, "test@example.com", "wrong_password")
+            assert user == False
 
 
 @pytest.mark.asyncio

@@ -42,21 +42,11 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <h3 className="font-semibold">Legal</h3>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/privacy"
-                  className="text-muted-foreground text-sm hover:text-primary transition-colors"
-                >
-                  Privacy Policy
-                </Link>
+              <li className="text-muted-foreground text-sm hover:text-primary transition-colors">
+                Privacy Policy
               </li>
-              <li>
-                <Link
-                  to="/terms"
-                  className="text-muted-foreground text-sm hover:text-primary transition-colors"
-                >
-                  Terms of Service
-                </Link>
+              <li className="text-muted-foreground text-sm hover:text-primary transition-colors">
+                Terms of Service
               </li>
             </ul>
           </div>

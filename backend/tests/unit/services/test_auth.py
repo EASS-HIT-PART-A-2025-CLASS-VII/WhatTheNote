@@ -48,7 +48,9 @@ async def test_authenticate_user_wrong_password(mock_db):
         "app.services.auth.get_user_by_email", AsyncMock(return_value=mock_user_data)
     ):
         with patch("app.services.auth.verify_password", return_value=False):
-            user = await authenticate_user(mock_db, "test@example.com", "wrong_password")
+            user = await authenticate_user(
+                mock_db, "test@example.com", "wrong_password"
+            )
             assert user == False
 
 

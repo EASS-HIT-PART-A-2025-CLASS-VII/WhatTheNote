@@ -11,6 +11,7 @@ sys.path.insert(0, str(backend_root))
 # Verify the app module can be imported
 try:
     import app
+
     print(f"Successfully imported app from: {app.__file__}")
 except ImportError as e:
     print(f"Failed to import app: {e}")

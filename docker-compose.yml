@@ -6,8 +6,6 @@ services:
     container_name: whatthenote-backend
     env_file:
       - ./.env
-    environment:
-      - GROQ_SERVICE_URL=http://groq:9000
     ports:
       - "8000:8000"
     depends_on:
